@@ -1,0 +1,8 @@
+dist
+node_modules
+coverage
+*.config.{js,ts}
+vite.config.ts
+.eslint.config.js
+.env*
+!.env.example

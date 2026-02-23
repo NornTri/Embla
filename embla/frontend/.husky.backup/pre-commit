@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Running frontend pre-commit hooks..."
+cd frontend || exit 1
+bun run lint --fix
+bun run format

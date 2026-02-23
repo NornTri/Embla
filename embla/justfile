@@ -36,3 +36,66 @@ logs *args:
 # manage: Executes `manage.py` command.
 manage +args:
     @docker compose run --rm django python ./manage.py {{args}}
+
+# frontend-dev: Start frontend development server
+frontend-dev:
+    @echo "Starting frontend development server..."
+    @docker compose up frontend -d --remove-orphans
+
+# frontend-logs: View frontend container logs
+frontend-logs:
+    @docker compose logs -f frontend
+
+# frontend-test: Run frontend tests
+frontend-test:
+    @echo "Running frontend tests..."
+    @docker compose exec frontend bun run test:ci
+
+# frontend-test-watch: Run frontend tests in watch mode
+frontend-test-watch:
+    @echo "Running frontend tests in watch mode..."
+    @docker compose exec frontend bun run test:watch
+
+# frontend-lint: Run frontend linting
+frontend-lint:
+    @echo "Running frontend linting..."
+    @docker compose exec frontend bun run lint
+
+# frontend-type-check: Run frontend TypeScript type checking
+frontend-type-check:
+    @echo "Running frontend type checking..."
+    @docker compose exec frontend bun run type-check
+
+# frontend-format: Format frontend code with Prettier
+frontend-format:
+    @echo "Formatting frontend code..."
+    @docker compose exec frontend bun run format
+
+# frontend-format-check: Check frontend code formatting
+frontend-format-check:
+    @echo "Checking frontend code formatting..."
+    @docker compose exec frontend bun run format:check
+
+# frontend-build: Build frontend production bundle
+frontend-build:
+    @echo "Building frontend production bundle..."
+    @docker compose exec frontend bun run build
+
+# frontend-validate: Run all frontend validation steps (lint, type-check, test)
+frontend-validate:
+    @echo "Running frontend validation..."
+    @docker compose exec frontend bun run validate
+
+# frontend-install: Install frontend dependencies
+frontend-install:
+    @echo "Installing frontend dependencies..."
+    @docker compose run --rm frontend bun install
+
+# frontend-shell: Open shell in frontend container
+frontend-shell:
+    @docker compose exec frontend /bin/sh
+
+# frontend-restart: Restart frontend container
+frontend-restart:
+    @echo "Restarting frontend container..."
+    @docker compose restart frontend
