@@ -1,13 +1,10 @@
 from datetime import timedelta
+from http import HTTPStatus
 
 from django.conf import settings
-from rest_framework.response import Response
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.views import TokenVerifyView
 
 
 class CookieTokenObtainPairView(TokenObtainPairView):
@@ -16,7 +13,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
 
-        if response.status_code == 200:
+        if response.status_code == HTTPStatus.OK:
             access_token = response.data.get("access")
             refresh_token = response.data.get("refresh")
 
@@ -58,7 +55,7 @@ class CookieTokenRefreshView(TokenRefreshView):
 
         response = super().post(request, *args, **kwargs)
 
-        if response.status_code == 200:
+        if response.status_code == HTTPStatus.OK:
             access_token = response.data.get("access")
 
             if access_token:

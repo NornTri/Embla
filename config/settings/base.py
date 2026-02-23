@@ -23,7 +23,8 @@ if READ_DOT_ENV_FILE:
 DEBUG = env.bool("DJANGO_DEBUG", False)
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env(
-    "DJANGO_SECRET_KEY", default="insecure-secret-key-for-development-only"
+    "DJANGO_SECRET_KEY",
+    default="insecure-secret-key-for-development-only",
 )
 # Local time zone. Choices are
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

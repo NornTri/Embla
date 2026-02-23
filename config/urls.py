@@ -8,17 +8,12 @@ from django.views import defaults as default_views
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
-from embla.users.api.views import csrf, logout
-from embla.users.api.jwt_views import (
-    CookieTokenObtainPairView,
-    CookieTokenRefreshView,
-    CookieTokenVerifyView,
-)
+
+from embla.users.api.jwt_views import CookieTokenObtainPairView
+from embla.users.api.jwt_views import CookieTokenRefreshView
+from embla.users.api.jwt_views import CookieTokenVerifyView
+from embla.users.api.views import csrf
+from embla.users.api.views import logout
 
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}

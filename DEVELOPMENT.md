@@ -28,7 +28,7 @@ This guide provides detailed instructions for developing the Embla application, 
    cp .envs/.local/.django.example .envs/.local/.django
    cp .envs/.local/.postgres.example .envs/.local/.postgres
    cp frontend/.env.example frontend/.env.development
-   
+
    # Generate Django secret key
    echo "DJANGO_SECRET_KEY=$(openssl rand -hex 64)" >> .envs/.local/.django
    ```
@@ -37,7 +37,7 @@ This guide provides detailed instructions for developing the Embla application, 
    ```bash
    # Start all services
    just up
-   
+
    # Or start specific services
    docker compose up django postgres redis -d
    docker compose up frontend -d
@@ -47,10 +47,10 @@ This guide provides detailed instructions for developing the Embla application, 
    ```bash
    # Run migrations
    just manage migrate
-   
+
    # Create superuser
    just manage createsuperuser
-   
+
    # Load test data (if available)
    just manage loaddata initial_data
    ```
@@ -175,11 +175,11 @@ import { Login } from '../pages/Login';
 test('login form submits credentials', async () => {
   const user = userEvent.setup();
   render(<Login />);
-  
+
   await user.type(screen.getByLabelText(/username/i), 'testuser');
   await user.type(screen.getByLabelText(/password/i), 'password123');
   await user.click(screen.getByRole('button', { name: /login/i }));
-  
+
   await waitFor(() => {
     expect(mockAxios.post).toHaveBeenCalledWith('/api/token/', {
       username: 'testuser',
@@ -226,12 +226,12 @@ def test_user_login(client: Client):
         username="testuser",
         password="testpass123"
     )
-    
+
     response = client.post("/api/token/", {
         "username": "testuser",
         "password": "testpass123"
     })
-    
+
     assert response.status_code == 200
     assert "access" in response.json()
 ```
