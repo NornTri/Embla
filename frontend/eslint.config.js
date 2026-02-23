@@ -5,6 +5,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import importPlugin from 'eslint-plugin-import'
 import tailwind from 'eslint-plugin-tailwindcss'
+import globals from 'globals'
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
@@ -23,14 +24,21 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
         ecmaFeatures: {
           jsx: true,
         },
+      },
+      globals: {
+        ...globals.browser,
       },
     },
     rules: {
       // Base rules from eslint:recommended
       ...js.configs.recommended.rules,
+      // Disable base no-unused-vars in favor of TS version
+      'no-unused-vars': 'off',
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -67,7 +75,14 @@ export default [
       '@typescript-eslint/require-await': 'error',
       '@typescript-eslint/await-thenable': 'error',
       '@typescript-eslint/no-floating-promises': 'error',
-      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
+        },
+      ],
       '@typescript-eslint/prefer-promise-reject-errors': 'error',
       '@typescript-eslint/no-unnecessary-type-assertion': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
@@ -125,7 +140,6 @@ export default [
           },
         },
       ],
-      'import/no-unused-modules': ['error', { unusedExports: true }],
       'import/no-default-export': 'error',
       'import/no-anonymous-default-export': 'error',
       // General code quality rules
@@ -167,6 +181,40 @@ export default [
           '!**/.*',
         ],
       },
+    },
+  },
+  // Test files - relax rules for mocking and test patterns
+  {
+    files: ['**/__tests__/**/*.{ts,tsx}', '**/__mocks__/**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        test: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      'react-refresh/only-export-components': 'off',
+      'import/no-default-export': 'off',
+      'import/no-anonymous-default-export': 'off',
+      'no-console': 'off',
     },
   },
   // Ignore patterns

@@ -1,8 +1,10 @@
-import { ReactElement } from 'react'
-import { render, RenderOptions } from '@testing-library/react'
+import React, { type ReactElement } from 'react'
+
 import { BrowserRouter } from 'react-router-dom'
+
+import { render, type RenderOptions } from '@testing-library/react'
+
 import { AuthProvider } from '../contexts/AuthContext'
-import { vi } from 'vitest'
 
 // Mock user data for testing
 export const mockUser = {
@@ -13,7 +15,7 @@ export const mockUser = {
 
 // Mock API responses
 export const mockApiResponses = {
-  success: (data: any) => ({
+  success: (data: unknown) => ({
     data,
     status: 200,
     statusText: 'OK',

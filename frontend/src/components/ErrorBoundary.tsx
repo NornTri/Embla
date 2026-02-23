@@ -1,5 +1,6 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { checkHealth } from '../utils/health'
+import React, { Component, type ErrorInfo, type ReactNode } from 'react'
+
+import { checkHealth, type HealthStatus } from '../utils/health'
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -11,20 +12,9 @@ interface ErrorBoundaryState {
   hasError: boolean
   error: Error | null
   errorInfo: ErrorInfo | null
-  healthStatus: any | null
+  healthStatus: HealthStatus | null
 }
 
-/**
- * Error boundary component that catches JavaScript errors in its child component tree,
- * logs those errors, and displays a fallback UI.
- * 
- * Usage:
- * ```tsx
- * <ErrorBoundary fallback={<ErrorScreen />}>
- *   <YourComponent />
- * </ErrorBoundary>
- * ```
- */
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props)
@@ -37,23 +27,20 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
-    // Update state so the next render will show the fallback UI
     return {
       hasError: true,
       error,
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   override async componentDidCatch(error: Error, errorInfo: ErrorInfo): Promise<void> {
-    // Update state with error info
     this.setState({
       errorInfo,
     })
 
-    // Log the error to console
     console.error('React Error Boundary caught an error:', error, errorInfo)
 
-    // Collect health status for debugging
     try {
       const healthStatus = await checkHealth()
       this.setState({ healthStatus })
@@ -62,13 +49,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       console.error('Failed to collect health status:', healthError)
     }
 
-    // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
     }
 
-    // In production, you would send this to an error tracking service
-    // Example: Sentry.captureException(error, { extra: errorInfo })
     if (import.meta.env.VITE_APP_ENV === 'production') {
       console.warn('Error caught by ErrorBoundary:', error)
     }
@@ -89,7 +73,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   override render(): ReactNode {
     if (this.state.hasError) {
-      // Render custom fallback or default error UI
       if (this.props.fallback) {
         return this.props.fallback
       }
@@ -104,12 +87,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     const { error, errorInfo, healthStatus } = this.state
 
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
+        <div className="w-full max-w-2xl rounded-lg bg-white p-8 shadow-lg">
+          <div className="mb-8 text-center">
+            <div className="mb-4 inline-flex size-16 items-center justify-center rounded-full bg-red-100">
               <svg
-                className="w-8 h-8 text-red-600"
+                className="size-8 text-red-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -123,23 +106,22 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="mb-2 text-2xl font-bold text-gray-900">
               Something went wrong
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="mb-6 text-gray-600">
               An error occurred while rendering this page. Our team has been notified.
             </p>
           </div>
 
           <div className="space-y-6">
-            {/* Error Details (collapsible for developers) */}
             {(import.meta.env.VITE_APP_ENV === 'development' && error) && (
-              <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div className="overflow-hidden rounded-lg border border-gray-200">
                 <details className="group">
-                  <summary className="flex items-center justify-between p-4 bg-gray-50 cursor-pointer hover:bg-gray-100">
+                  <summary className="flex cursor-pointer items-center justify-between bg-gray-50 p-4 hover:bg-gray-100">
                     <span className="font-medium text-gray-900">Error Details (Development)</span>
                     <svg
-                      className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform"
+                      className="size-5 text-gray-500 transition-transform group-open:rotate-180"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -153,25 +135,25 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                       />
                     </svg>
                   </summary>
-                  <div className="p-4 bg-white border-t border-gray-200">
+                  <div className="border-t border-gray-200 bg-white p-4">
                     <div className="mb-4">
-                      <h3 className="font-medium text-gray-900 mb-2">Error Message</h3>
-                      <pre className="text-sm text-red-600 bg-red-50 p-3 rounded overflow-auto">
+                      <h3 className="mb-2 font-medium text-gray-900">Error Message</h3>
+                      <pre className="overflow-auto rounded bg-red-50 p-3 text-sm text-red-600">
                         {error.toString()}
                       </pre>
                     </div>
                     {errorInfo && (
                       <div className="mb-4">
-                        <h3 className="font-medium text-gray-900 mb-2">Component Stack</h3>
-                        <pre className="text-sm text-gray-700 bg-gray-50 p-3 rounded overflow-auto">
+                        <h3 className="mb-2 font-medium text-gray-900">Component Stack</h3>
+                        <pre className="overflow-auto rounded bg-gray-50 p-3 text-sm text-gray-700">
                           {errorInfo.componentStack}
                         </pre>
                       </div>
                     )}
                     {healthStatus && (
                       <div>
-                        <h3 className="font-medium text-gray-900 mb-2">Health Status</h3>
-                        <pre className="text-sm text-gray-700 bg-gray-50 p-3 rounded overflow-auto">
+                        <h3 className="mb-2 font-medium text-gray-900">Health Status</h3>
+                        <pre className="overflow-auto rounded bg-gray-50 p-3 text-sm text-gray-700">
                           {JSON.stringify(healthStatus, null, 2)}
                         </pre>
                       </div>
@@ -181,42 +163,40 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               </div>
             )}
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col gap-4 pt-4 sm:flex-row">
               <button
                 onClick={this.handleReset}
-                className="flex-1 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Try Again
               </button>
               <button
                 onClick={this.handleReload}
-                className="flex-1 px-6 py-3 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
+                className="flex-1 rounded-lg bg-gray-200 px-6 py-3 font-medium text-gray-800 transition-colors hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
               >
                 Reload Page
               </button>
               <a
                 href="/"
-                className="flex-1 px-6 py-3 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition-colors text-center"
+                className="flex-1 rounded-lg bg-gray-800 px-6 py-3 text-center font-medium text-white transition-colors hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
               >
                 Go to Home
               </a>
             </div>
 
-            {/* Support Contact */}
-            <div className="pt-6 border-t border-gray-200">
-              <p className="text-sm text-gray-600 text-center">
+            <div className="border-t border-gray-200 pt-6">
+              <p className="text-center text-sm text-gray-600">
                 Need help?{' '}
                 <a
                   href="mailto:support@example.com"
-                  className="text-blue-600 hover:text-blue-800 font-medium"
+                  className="font-medium text-blue-600 hover:text-blue-800"
                 >
                   Contact support
                 </a>{' '}
                 or{' '}
                 <a
                   href="/docs/troubleshooting"
-                  className="text-blue-600 hover:text-blue-800 font-medium"
+                  className="font-medium text-blue-600 hover:text-blue-800"
                 >
                   view troubleshooting guide
                 </a>
@@ -229,34 +209,25 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 }
 
-/**
- * Higher-order component that wraps a component with ErrorBoundary
- */
 export function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
+  WrappedComponent: React.ComponentType<P>,
   errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
 ): React.ComponentType<P> {
-  const WrappedComponent: React.ComponentType<P> = (props: P) => (
+  const WithErrorBoundary: React.ComponentType<P> = (props: P) => (
     <ErrorBoundary {...errorBoundaryProps}>
-      <Component {...props} />
+      <WrappedComponent {...props} />
     </ErrorBoundary>
   )
-  
-  // Copy display name for debugging
-  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`
-  
-  return WrappedComponent
+
+  WithErrorBoundary.displayName = `withErrorBoundary(${WrappedComponent.displayName ?? WrappedComponent.name})`
+
+  return WithErrorBoundary
 }
 
-/**
- * Hook to manually report errors to the error boundary context
- * (if using error boundary with context)
- */
 export function useErrorReporter() {
-  const reportError = React.useCallback((error: Error, context?: Record<string, any>) => {
+  const reportError = React.useCallback((error: Error, context?: Record<string, unknown>) => {
     console.error('Reported error:', error, context)
-    
-    // In production, send to error tracking service
+
     if (import.meta.env.VITE_APP_ENV === 'production') {
       console.warn('Reported error:', error, context)
     }

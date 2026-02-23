@@ -1,6 +1,10 @@
-/**
- * Health check utilities for monitoring frontend application status
- */
+interface PerformanceWithMemory extends Performance {
+  memory?: {
+    jsHeapSizeLimit: number
+    totalJSHeapSize: number
+    usedJSHeapSize: number
+  }
+}
 
 export interface HealthStatus {
   timestamp: string
@@ -31,24 +35,21 @@ export interface HealthStatus {
   }
 }
 
-/**
- * Check frontend application health
- */
 export async function checkHealth(): Promise<HealthStatus> {
   const startTime = Date.now()
   const status: HealthStatus = {
     timestamp: new Date().toISOString(),
     frontend: {
       status: 'healthy',
-      version: import.meta.env['VITE_APP_VERSION'] || '0.0.0',
-      environment: import.meta.env['VITE_APP_ENV'] || 'development',
+      version: import.meta.env.VITE_APP_VERSION ?? '0.0.0',
+      environment: import.meta.env.VITE_APP_ENV ?? 'development',
       userAgent: navigator.userAgent,
-      screenResolution: `${window.screen.width}x${window.screen.height}`,
+      screenResolution: `${String(window.screen.width)}x${String(window.screen.height)}`,
       memory: getMemoryInfo(),
     },
     api: {
       status: 'healthy',
-      endpoint: import.meta.env['VITE_API_URL'] || 'http://localhost:8000',
+      endpoint: import.meta.env.VITE_API_URL ?? 'http://localhost:8000',
     },
     browser: {
       name: getBrowserName(),
@@ -60,20 +61,18 @@ export async function checkHealth(): Promise<HealthStatus> {
     },
   }
 
-  // Test API connectivity
   try {
     const apiStartTime = Date.now()
     const response = await fetch(`${status.api.endpoint}/health/`, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
-      // Short timeout for health check
       signal: AbortSignal.timeout(5000),
     })
-    
+
     status.api.responseTime = Date.now() - apiStartTime
-    
+
     if (response.ok) {
       status.api.status = 'healthy'
     } else {
@@ -86,12 +85,10 @@ export async function checkHealth(): Promise<HealthStatus> {
     console.warn('API health check failed:', error)
   }
 
-  // Check critical frontend functionality
   if (!status.browser.localStorageEnabled || !status.browser.sessionStorageEnabled) {
     status.frontend.status = 'degraded'
   }
 
-  // Check memory pressure
   if (status.frontend.memory.usedJSHeapSize && status.frontend.memory.jsHeapSizeLimit) {
     const memoryUsagePercent = (status.frontend.memory.usedJSHeapSize / status.frontend.memory.jsHeapSizeLimit) * 100
     if (memoryUsagePercent > 90) {
@@ -99,53 +96,39 @@ export async function checkHealth(): Promise<HealthStatus> {
     }
   }
 
-  // Calculate total response time
-  const totalTime = Date.now() - startTime
-  console.debug(`Health check completed in ${totalTime}ms`, status)
+  const _totalTime = Date.now() - startTime
 
   return status
 }
 
-/**
- * Get browser memory information if available
- */
 function getMemoryInfo(): HealthStatus['frontend']['memory'] {
-  if ('memory' in (performance as any)) {
-    const memory = (performance as any).memory
+  const perf = performance as PerformanceWithMemory
+  if (perf.memory) {
     return {
-      jsHeapSizeLimit: memory.jsHeapSizeLimit,
-      totalJSHeapSize: memory.totalJSHeapSize,
-      usedJSHeapSize: memory.usedJSHeapSize,
+      jsHeapSizeLimit: perf.memory.jsHeapSizeLimit,
+      totalJSHeapSize: perf.memory.totalJSHeapSize,
+      usedJSHeapSize: perf.memory.usedJSHeapSize,
     }
   }
   return {}
 }
 
-/**
- * Detect browser name from user agent
- */
 function getBrowserName(): string {
   const userAgent = navigator.userAgent
-  if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) return 'Chrome'
-  if (userAgent.includes('Firefox')) return 'Firefox'
-  if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) return 'Safari'
-  if (userAgent.includes('Edg')) return 'Edge'
-  if (userAgent.includes('Opera') || userAgent.includes('OPR')) return 'Opera'
+  if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) { return 'Chrome' }
+  if (userAgent.includes('Firefox')) { return 'Firefox' }
+  if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) { return 'Safari' }
+  if (userAgent.includes('Edg')) { return 'Edge' }
+  if (userAgent.includes('Opera') || userAgent.includes('OPR')) { return 'Opera' }
   return 'Unknown'
 }
 
-/**
- * Detect browser version from user agent
- */
 function getBrowserVersion(): string {
   const userAgent = navigator.userAgent
   const match = userAgent.match(/(chrome|firefox|safari|edge|opera|opr)\/?\s*(\d+)/i)
-  return match && match[2] ? match[2] : 'Unknown'
+  return match?.[2] ?? 'Unknown'
 }
 
-/**
- * Test localStorage availability
- */
 function testLocalStorage(): boolean {
   try {
     const testKey = '__health_test__'
@@ -157,9 +140,6 @@ function testLocalStorage(): boolean {
   }
 }
 
-/**
- * Test sessionStorage availability
- */
 function testSessionStorage(): boolean {
   try {
     const testKey = '__health_test__'
@@ -171,47 +151,48 @@ function testSessionStorage(): boolean {
   }
 }
 
-/**
- * Log health status to console (development only)
- */
 export function logHealthStatus(): void {
-  if (import.meta.env['VITE_APP_ENV'] === 'development') {
+  if (import.meta.env.VITE_APP_ENV === 'development') {
     checkHealth().then(status => {
+      // eslint-disable-next-line no-console
       console.group('Application Health Status')
+      // eslint-disable-next-line no-console
       console.log('Timestamp:', status.timestamp)
+      // eslint-disable-next-line no-console
       console.log('Frontend:', status.frontend)
+      // eslint-disable-next-line no-console
       console.log('API:', status.api)
+      // eslint-disable-next-line no-console
       console.log('Browser:', status.browser)
+      // eslint-disable-next-line no-console
       console.groupEnd()
-    }).catch(error => {
+    }).catch((error: unknown) => {
       console.error('Health check failed:', error)
     })
   }
 }
 
-/**
- * Register periodic health checks (development only)
- */
-export function startHealthMonitoring(intervalMs: number = 30000): () => void {
-  if (import.meta.env['VITE_APP_ENV'] !== 'development') {
-    return () => {} // No-op in production
+export function startHealthMonitoring(intervalMs = 30000): () => void {
+  if (import.meta.env.VITE_APP_ENV !== 'development') {
+    return () => {}
   }
 
-  console.log(`Starting health monitoring with ${intervalMs}ms interval`)
-  
+  // eslint-disable-next-line no-console
+  console.log(`Starting health monitoring with ${String(intervalMs)}ms interval`)
+
   const intervalId = setInterval(() => {
     checkHealth().then(status => {
       if (status.frontend.status === 'unhealthy' || status.api.status === 'unreachable') {
         console.warn('Health check warning:', status)
       }
-    }).catch(error => {
+    }).catch((error: unknown) => {
       console.error('Health monitoring error:', error)
     })
   }, intervalMs)
 
-  // Return cleanup function
   return () => {
     clearInterval(intervalId)
+    // eslint-disable-next-line no-console
     console.log('Health monitoring stopped')
   }
 }

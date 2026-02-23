@@ -30,6 +30,7 @@ mockAxios.interceptors = {
   request: { use: vi.fn(), eject: vi.fn() },
   response: { use: vi.fn(), eject: vi.fn() },
 }
+mockAxios.isAxiosError = vi.fn(() => false)
 
 // Export mock instance for test control
 export { mockAxiosInstance }

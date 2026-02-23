@@ -1,7 +1,8 @@
+import { vi, type Mock } from 'vitest'
+
+import { Dashboard } from '../pages/Dashboard'
 
 import { render, screen } from './test-utils'
-import Dashboard from '../pages/Dashboard'
-import { vi, type Mock } from 'vitest'
 
 // Mock useAuth only, keep other exports
 vi.mock('../contexts/AuthContext', async (importOriginal) => {
@@ -12,8 +13,8 @@ vi.mock('../contexts/AuthContext', async (importOriginal) => {
   }
 })
 
-// Need to import after mock
-import { useAuth } from '../contexts/AuthContext'
+// Need to import after mock - eslint-disable-next-line must follow vi.mock
+import { useAuth } from '../contexts/AuthContext' // eslint-disable-line import/order
 
 const mockedUseAuth = useAuth as Mock
 
@@ -58,11 +59,9 @@ describe('Dashboard Page', () => {
 
     render(<Dashboard />)
 
-    // Check section headings
     expect(screen.getByRole('heading', { name: /recent activity/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /quick actions/i })).toBeInTheDocument()
-    
-    // Check button texts (they're actually buttons with text)
+
     expect(screen.getByText(/edit profile/i)).toBeInTheDocument()
     expect(screen.getByText(/change password/i)).toBeInTheDocument()
   })

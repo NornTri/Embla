@@ -1,9 +1,6 @@
 import '@testing-library/jest-dom/vitest'
-import { afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
-
-// Extend Vitest's expect with React Testing Library matchers
-// (already done by importing '@testing-library/jest-dom/vitest')
+import { afterEach, vi } from 'vitest'
 
 // Automatically cleanup after each test
 afterEach(() => {
@@ -11,16 +8,16 @@ afterEach(() => {
 })
 
 // Mock ResizeObserver which is not available in jsdom
-;(window as any).ResizeObserver = class ResizeObserver {
+window.ResizeObserver = class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
-}
+} as unknown as typeof ResizeObserver
 
 // Mock matchMedia for responsive design tests
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation((query) => ({
+  value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -33,9 +30,7 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 // Mock scrollTo for window
-window.scrollTo = vi.fn() as any
-
-
+window.scrollTo = vi.fn() as unknown as typeof window.scrollTo
 
 // Mock localStorage
 const localStorageMock = {

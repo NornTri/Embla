@@ -1,7 +1,8 @@
+import { vi, type Mock } from 'vitest'
+
+import { PrivateRoute } from '../components/PrivateRoute'
 
 import { render, screen } from './test-utils'
-import PrivateRoute from '../components/PrivateRoute'
-import { vi, type Mock } from 'vitest'
 
 // Mock useAuth only, keep other exports
 vi.mock('../contexts/AuthContext', async (importOriginal) => {
@@ -13,7 +14,7 @@ vi.mock('../contexts/AuthContext', async (importOriginal) => {
 })
 
 // Need to import after mock
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../contexts/AuthContext' // eslint-disable-line import/order
 
 const mockedUseAuth = useAuth as Mock
 
@@ -25,7 +26,6 @@ describe('PrivateRoute', () => {
   })
 
   it('renders loading indicator when loading', () => {
-    // Mock loading state
     mockedUseAuth.mockReturnValue({
       isAuthenticated: false,
       loading: true,
@@ -38,7 +38,6 @@ describe('PrivateRoute', () => {
   })
 
   it('redirects to login when not authenticated', () => {
-    // Mock not authenticated, loading false
     mockedUseAuth.mockReturnValue({
       isAuthenticated: false,
       loading: false,
@@ -46,13 +45,11 @@ describe('PrivateRoute', () => {
 
     render(<PrivateRoute><TestChild /></PrivateRoute>)
 
-    // Should redirect to /login - Navigate component renders nothing
     expect(screen.queryByTestId('test-child')).not.toBeInTheDocument()
     expect(screen.queryByText('Loading...')).not.toBeInTheDocument()
   })
 
   it('renders children when authenticated', () => {
-    // Mock authenticated
     mockedUseAuth.mockReturnValue({
       isAuthenticated: true,
       loading: false,

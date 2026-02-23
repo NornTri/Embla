@@ -1,5 +1,6 @@
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react'
-import axios from 'axios'
+import React, { createContext, useState, useEffect, useContext, type ReactNode } from 'react'
+
+import axios, { type AxiosInstance } from 'axios'
 
 interface User {
   id: number
@@ -23,16 +24,17 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 // Base URL for API - will be proxied in dev, set via environment variable in production
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? '/api'
 
 // Create axios instance with interceptors
-const api = axios.create({
+const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
 })
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext)
   if (context === undefined) {
@@ -49,58 +51,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-
   useEffect(() => {
-    // Check if user is already authenticated
     const checkAuth = async () => {
       try {
-        const response = await api.get('/users/me/')
+        const response = await api.get<User>('/users/me/')
         setUser(response.data)
-      } catch (error) {
+      } catch {
         setUser(null)
       } finally {
         setLoading(false)
       }
     }
-    checkAuth()
+    void checkAuth()
   }, [])
 
   useEffect(() => {
     const responseInterceptor = api.interceptors.response.use(
       (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-        // Skip if already retried or if it's a refresh request
-        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/token/refresh/')) {
-          originalRequest._retry = true;
+      async (error: unknown) => {
+        const axiosError = error as { config: Record<string, unknown>; response?: { status: number } }
+        const originalRequest = axiosError.config
+        if (axiosError.response?.status === 401 && !originalRequest['_retry'] && !(originalRequest['url'] as string | undefined)?.includes('/token/refresh/')) {
+          originalRequest['_retry'] = true
           try {
-            await api.post('/token/refresh/');
-            return api(originalRequest);
+            await api.post('/token/refresh/')
+            return await api(originalRequest as Parameters<typeof api>[0])
           } catch (refreshError) {
-            // Refresh failed, logout
-            setUser(null);
-            throw refreshError;
+            setUser(null)
+            throw refreshError
           }
         }
-        return Promise.reject(error);
+        return Promise.reject(error as Error)
       }
-    );
+    )
 
     return () => {
-      api.interceptors.response.eject(responseInterceptor);
-    };
+      api.interceptors.response.eject(responseInterceptor)
+    }
   }, [])
 
   const login = async (email: string, password: string) => {
     setLoading(true)
     try {
-      // First get CSRF token
       await api.get('/csrf/')
-      // Then login with JWT
       await api.post('/token/', { email, password })
-      // JWT tokens will be set as httpOnly cookies by backend
-      // Now fetch user data
-      const userResponse = await api.get('/users/me/')
+      const userResponse = await api.get<User>('/users/me/')
       setUser(userResponse.data)
     } catch (error) {
       setUser(null)

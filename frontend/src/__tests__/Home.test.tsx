@@ -1,8 +1,9 @@
+import userEvent from '@testing-library/user-event'
+import { vi, type Mock } from 'vitest'
+
+import { Home } from '../pages/Home'
 
 import { render, screen } from './test-utils'
-import userEvent from '@testing-library/user-event'
-import Home from '../pages/Home'
-import { vi, type Mock } from 'vitest'
 
 // Mock useAuth only, keep other exports
 vi.mock('../contexts/AuthContext', async (importOriginal) => {
@@ -14,7 +15,7 @@ vi.mock('../contexts/AuthContext', async (importOriginal) => {
 })
 
 // Need to import after mock
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../contexts/AuthContext' // eslint-disable-line import/order
 
 const mockedUseAuth = useAuth as Mock
 

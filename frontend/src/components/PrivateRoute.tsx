@@ -1,15 +1,18 @@
+import { type ReactNode } from 'react'
+
 import { Navigate } from 'react-router-dom'
+
 import { useAuth } from '../contexts/AuthContext'
 
 interface PrivateRouteProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+export const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const { isAuthenticated, loading } = useAuth()
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
+    return <div className="flex h-screen items-center justify-center">Loading...</div>
   }
 
   if (!isAuthenticated) {
@@ -18,5 +21,3 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
 
   return <>{children}</>
 }
-
-export default PrivateRoute

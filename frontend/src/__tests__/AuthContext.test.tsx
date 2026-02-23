@@ -1,9 +1,11 @@
 import React from 'react'
-import { render, screen, waitFor } from './test-utils'
-import { useAuth } from '../contexts/AuthContext'
-import { mockUser } from './test-utils'
-import { mockAxiosInstance } from '../__mocks__/axios'
+
 import { vi } from 'vitest'
+
+import { mockAxiosInstance } from '../__mocks__/axios'
+import { useAuth } from '../contexts/AuthContext'
+
+import { render, screen, waitFor, mockUser } from './test-utils'
 
 // Reset mock instance before each test
 const resetMockAxiosInstance = () => {
@@ -68,7 +70,7 @@ describe('AuthContext', () => {
       // Should be authenticated with user data
       expect(screen.getByTestId('isAuthenticated')).toHaveTextContent('true')
       expect(screen.getByTestId('user')).toHaveTextContent(mockUser.email)
-      
+
       // Verify the API was called with correct endpoint
       expect(mockAxiosInstance.get).toHaveBeenCalledWith('/users/me/')
     })
@@ -98,14 +100,12 @@ describe('AuthContext', () => {
       // Mock user fetch
       mockAxiosInstance.get.mockResolvedValueOnce({ data: mockUser }) // /users/me/
 
-      // We need to test login function directly
-      // Create a test component that calls login
       const LoginTestComponent = () => {
         const { login, user, loading } = useAuth()
         const handleLogin = async () => {
           try {
             await login('test@example.com', 'password')
-          } catch (error) {
+          } catch {
             // ignore
           }
         }
@@ -120,15 +120,12 @@ describe('AuthContext', () => {
 
       render(<LoginTestComponent />)
 
-      // Click login button
       screen.getByText('Login').click()
 
-      // Wait for loading to finish and user to be set
       await waitFor(() => {
         expect(screen.getByTestId('user')).toHaveTextContent(mockUser.email)
       })
 
-      // Verify API calls were made in correct order
       expect(mockAxiosInstance.get).toHaveBeenNthCalledWith(1, '/csrf/')
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/token/', {
         email: 'test@example.com',
@@ -149,7 +146,7 @@ describe('AuthContext', () => {
         const handleLogin = async () => {
           try {
             await login('test@example.com', 'password')
-          } catch (error) {
+          } catch {
             setError('Login failed')
           }
         }
@@ -199,23 +196,18 @@ describe('AuthContext', () => {
 
       render(<LogoutTestComponent />)
 
-      // Wait for initial auth to complete
       await waitFor(() => {
         expect(screen.getByTestId('user')).toHaveTextContent(mockUser.email)
       })
 
-      // Click logout
       screen.getByText('Logout').click()
 
-      // Wait for loading to finish
       await waitFor(() => {
         expect(screen.getByTestId('loading')).toHaveTextContent('false')
       })
 
-      // User should be null after logout
       expect(screen.getByTestId('user')).toHaveTextContent('null')
-      
-      // Verify logout API was called
+
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/logout/')
     })
   })
