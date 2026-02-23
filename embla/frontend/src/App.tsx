@@ -13,7 +13,7 @@ import { useEffect } from 'react'
 function App() {
   // Initialize development tools
   useEffect(() => {
-    if (import.meta.env['VITE_APP_ENV'] === 'development') {
+    if (import.meta.env.VITE_APP_ENV === 'development') {
       // Initialize dev tools (React DevTools detection, console helpers, etc.)
       const cleanupDevTools = initDevTools()
       
@@ -43,7 +43,7 @@ function App() {
             <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             {/* Health page - only accessible in development or with proper auth */}
-            {import.meta.env['VITE_APP_ENV'] === 'development' && (
+            {import.meta.env.VITE_APP_ENV === 'development' && (
               <Route path="/health" element={<HealthPage />} />
             )}
             <Route path="*" element={<Navigate to="/" />} />

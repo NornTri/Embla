@@ -275,3 +275,6 @@ embla/media/
 .ipython/
 .env
 .envs/*
+
+# Test artifacts
+tmp/

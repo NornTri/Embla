@@ -128,8 +128,6 @@ just manage shell
 - **Ruff**: `uv run ruff check --fix` - Python linting and formatting
 - **mypy**: `uv run mypy embla` - Type checking
 - **pytest**: `uv run pytest` - Testing with coverage
-- **Black**: `uv run black .` - Code formatting
-- **isort**: `uv run isort .` - Import sorting
 
 ## Testing Strategy
 

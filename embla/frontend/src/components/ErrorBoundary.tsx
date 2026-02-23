@@ -69,9 +69,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
     // In production, you would send this to an error tracking service
     // Example: Sentry.captureException(error, { extra: errorInfo })
-    if (import.meta.env['VITE_APP_ENV'] === 'production') {
-      // TODO: Send to error tracking service
-      console.warn('In production, this error would be sent to error tracking service')
+    if (import.meta.env.VITE_APP_ENV === 'production') {
+      console.warn('Error caught by ErrorBoundary:', error)
     }
   }
 
@@ -134,7 +133,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
           <div className="space-y-6">
             {/* Error Details (collapsible for developers) */}
-            {(import.meta.env['VITE_APP_ENV'] === 'development' && error) && (
+            {(import.meta.env.VITE_APP_ENV === 'development' && error) && (
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <details className="group">
                   <summary className="flex items-center justify-between p-4 bg-gray-50 cursor-pointer hover:bg-gray-100">
@@ -258,9 +257,8 @@ export function useErrorReporter() {
     console.error('Reported error:', error, context)
     
     // In production, send to error tracking service
-    if (import.meta.env['VITE_APP_ENV'] === 'production') {
-      // TODO: Send to error tracking service
-      console.warn('In production, this error would be sent to error tracking service:', error, context)
+    if (import.meta.env.VITE_APP_ENV === 'production') {
+      console.warn('Reported error:', error, context)
     }
   }, [])
 
