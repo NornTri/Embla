@@ -13,7 +13,6 @@ Thank you for your interest in contributing to Embla! This document provides gui
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd embla
    ```
 
 2. Start the development environment:
@@ -131,17 +130,19 @@ Types:
 ## Project Structure
 
 ```
-embla/
+Embla/
 ├── frontend/           # React frontend (Vite + TypeScript)
 │   ├── src/           # Source code
 │   ├── __tests__/     # Test files
 │   └── package.json   # Dependencies and scripts
-├── embla/             # Django backend
+├── embla/             # Django backend package
 │   ├── users/         # User authentication app
-│   └── config/        # Django configuration
+│   └── contrib/       # Custom contrib apps
+├── config/            # Django configuration
 ├── .github/           # GitHub Actions workflows
 ├── compose/           # Docker configurations
-└── justfile          # Task runner commands
+├── manage.py          # Django management script
+└── justfile           # Task runner commands
 ```
 
 ## Environment Configuration

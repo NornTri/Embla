@@ -23,8 +23,7 @@ This guide provides detailed instructions for developing the Embla application, 
    ```bash
    # Clone the repository
    git clone <repository-url>
-   cd embla
-   
+
    # Copy environment files
    cp .envs/.local/.django.example .envs/.local/.django
    cp .envs/.local/.postgres.example .envs/.local/.postgres
