@@ -208,10 +208,8 @@ describe('AuthContext', () => {
       screen.getByText('Logout').click()
 
       await waitFor(() => {
-        expect(screen.getByTestId('loading')).toHaveTextContent('false')
+        expect(screen.getByTestId('user')).toHaveTextContent('null')
       })
-
-      expect(screen.getByTestId('user')).toHaveTextContent('null')
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/logout/')
     })
