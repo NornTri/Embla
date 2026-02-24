@@ -36,7 +36,6 @@ export interface HealthStatus {
 }
 
 export async function checkHealth(): Promise<HealthStatus> {
-  const startTime = Date.now()
   const status: HealthStatus = {
     timestamp: new Date().toISOString(),
     frontend: {
