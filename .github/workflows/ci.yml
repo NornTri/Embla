@@ -102,6 +102,7 @@ jobs:
       - name: Create env files
         run: |
           mkdir -p .envs/.local
+          touch .env
           touch .envs/.local/.django
           touch .envs/.local/.postgres
 
@@ -130,6 +131,7 @@ jobs:
       - name: Create env files
         run: |
           mkdir -p .envs/.local
+          touch .env
           touch .envs/.local/.django
           touch .envs/.local/.postgres
 
