@@ -42,14 +42,14 @@ repos:
     hooks:
       - id: frontend-lint
         name: frontend eslint
-        entry: bash -c 'cd frontend && bun run lint'
+        entry: bash -c 'export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" && cd frontend && bun run lint'
         language: system
         files: ^frontend/
         types_or: [javascript, jsx, ts, tsx]
         pass_filenames: false
       - id: frontend-format
         name: frontend prettier
-        entry: bash -c 'cd frontend && bun run format:check'
+        entry: bash -c 'export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" && cd frontend && bun run format:check'
         language: system
         files: ^frontend/
         types_or: [javascript, jsx, ts, tsx, css, html, json, markdown]
