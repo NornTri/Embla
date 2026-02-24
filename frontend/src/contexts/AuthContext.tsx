@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           originalRequest['_retry'] = true
           try {
             await api.post('/token/refresh/')
-            return await api(originalRequest as Parameters<typeof api>[0])
+            return await api(originalRequest as unknown as Parameters<typeof api>[0])
           } catch (refreshError) {
             setUser(null)
             throw refreshError

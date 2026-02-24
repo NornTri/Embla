@@ -96,8 +96,6 @@ export async function checkHealth(): Promise<HealthStatus> {
     }
   }
 
-  const _totalTime = Date.now() - startTime
-
   return status
 }
 
