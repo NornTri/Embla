@@ -93,6 +93,8 @@ describe('AuthContext', () => {
 
   describe('login', () => {
     it('successfully logs in and sets user', async () => {
+      // Mock initial auth check (AuthProvider mount)
+      mockAxiosInstance.get.mockRejectedValueOnce(new Error('Not authenticated'))
       // Mock CSRF endpoint
       mockAxiosInstance.get.mockResolvedValueOnce({}) // /csrf/
       // Mock token endpoint
@@ -126,15 +128,18 @@ describe('AuthContext', () => {
         expect(screen.getByTestId('user')).toHaveTextContent(mockUser.email)
       })
 
-      expect(mockAxiosInstance.get).toHaveBeenNthCalledWith(1, '/csrf/')
+      expect(mockAxiosInstance.get).toHaveBeenNthCalledWith(1, '/users/me/')
+      expect(mockAxiosInstance.get).toHaveBeenNthCalledWith(2, '/csrf/')
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/token/', {
         email: 'test@example.com',
         password: 'password',
       })
-      expect(mockAxiosInstance.get).toHaveBeenNthCalledWith(2, '/users/me/')
+      expect(mockAxiosInstance.get).toHaveBeenNthCalledWith(3, '/users/me/')
     })
 
     it('handles login failure', async () => {
+      // Mock initial auth check (AuthProvider mount)
+      mockAxiosInstance.get.mockRejectedValueOnce(new Error('Not authenticated'))
       // Mock CSRF success
       mockAxiosInstance.get.mockResolvedValueOnce({})
       // Mock token failure

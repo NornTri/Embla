@@ -1,6 +1,5 @@
 import pytest
 
-from embla.users.models import User
 from embla.users.tests.factories import UserFactory
 
 
@@ -10,5 +9,5 @@ def _media_storage(settings, tmpdir) -> None:
 
 
 @pytest.fixture
-def user(db) -> User:
+def user(db):
     return UserFactory()

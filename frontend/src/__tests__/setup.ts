@@ -2,6 +2,11 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { afterEach, vi } from 'vitest'
 
+// Activate the manual axios mock so AuthContext uses the mock instead of real axios
+vi.mock('axios', async () => {
+  return await import('../__mocks__/axios')
+})
+
 // Automatically cleanup after each test
 afterEach(() => {
   cleanup()

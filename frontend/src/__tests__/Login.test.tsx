@@ -21,6 +21,9 @@ describe('Login Page', () => {
     mockAxiosInstance.post.mockReset()
     mockAxiosInstance.put.mockReset()
     mockAxiosInstance.delete.mockReset()
+
+    // AuthProvider calls /users/me/ on mount - mock it to reject (not authenticated)
+    mockAxiosInstance.get.mockRejectedValueOnce(new Error('Not authenticated'))
   })
 
   afterEach(() => {
@@ -49,7 +52,14 @@ describe('Login Page', () => {
   })
 
   it('submits form and calls login API', async () => {
-    mockAxiosInstance.get.mockResolvedValueOnce({}) // CSRF
+    // Use a delayed CSRF mock so we can observe the loading state
+    let resolveCsrf!: (value: unknown) => void
+    mockAxiosInstance.get.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveCsrf = resolve
+        })
+    )
     mockAxiosInstance.post.mockResolvedValueOnce({}) // token
     mockAxiosInstance.get.mockResolvedValueOnce({
       data: { id: 1, email: 'test@example.com', name: 'Test User' },
@@ -62,11 +72,12 @@ describe('Login Page', () => {
 
     await user.click(screen.getByRole('button', { name: /sign in/i }))
 
+    // Button should show loading state while waiting for CSRF
     expect(screen.getByRole('button', { name: /signing in.../i })).toBeDisabled()
 
-    await waitFor(() => {
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith('/csrf/')
-    })
+    // Resolve the CSRF request to let login proceed
+    resolveCsrf({})
+
     await waitFor(() => {
       expect(mockAxiosInstance.post).toHaveBeenCalledWith('/token/', {
         email: 'test@example.com',
@@ -101,7 +112,13 @@ describe('Login Page', () => {
   })
 
   it('disables submit button while loading', async () => {
-    mockAxiosInstance.get.mockImplementation(() => new Promise(() => {})) // Never resolves
+    // After the initial auth check (from beforeEach), make subsequent get calls never resolve
+    mockAxiosInstance.get.mockImplementation(
+      (url: string) =>
+        url === '/users/me/'
+          ? Promise.reject(new Error('Not authenticated'))
+          : new Promise(() => {}) // Never resolves (e.g. /csrf/)
+    )
 
     const { user } = renderLogin()
 
@@ -122,6 +139,8 @@ describe('Login Page', () => {
 
     await user.click(submitButton)
 
-    expect(mockAxiosInstance.get).not.toHaveBeenCalled()
+    // Only the initial auth check from AuthProvider should have called get
+    expect(mockAxiosInstance.get).toHaveBeenCalledTimes(1)
+    expect(mockAxiosInstance.post).not.toHaveBeenCalled()
   })
 })

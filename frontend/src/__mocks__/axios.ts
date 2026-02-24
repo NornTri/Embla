@@ -30,7 +30,12 @@ mockAxios.interceptors = {
   request: { use: vi.fn(), eject: vi.fn() },
   response: { use: vi.fn(), eject: vi.fn() },
 }
-mockAxios.isAxiosError = vi.fn(() => false)
+mockAxios.isAxiosError = vi.fn((error: unknown) => {
+  return typeof error === 'object' && error !== null && 'response' in error
+})
+
+// Named export for isAxiosError (used as `import { isAxiosError } from 'axios'`)
+export const isAxiosError = mockAxios.isAxiosError
 
 // Export mock instance for test control
 export { mockAxiosInstance }
