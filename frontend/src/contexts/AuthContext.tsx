@@ -69,9 +69,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const responseInterceptor = api.interceptors.response.use(
       (response) => response,
       async (error: unknown) => {
-        const axiosError = error as { config: Record<string, unknown>; response?: { status: number } }
+        const axiosError = error as {
+          config: Record<string, unknown>
+          response?: { status: number }
+        }
         const originalRequest = axiosError.config
-        if (axiosError.response?.status === 401 && !originalRequest['_retry'] && !(originalRequest['url'] as string | undefined)?.includes('/token/refresh/')) {
+        if (
+          axiosError.response?.status === 401 &&
+          !originalRequest['_retry'] &&
+          !(originalRequest['url'] as string | undefined)?.includes('/token/refresh/')
+        ) {
           originalRequest['_retry'] = true
           try {
             await api.post('/token/refresh/')

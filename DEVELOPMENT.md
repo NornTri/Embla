@@ -3,6 +3,7 @@
 This guide provides detailed instructions for developing the Embla application, including local setup, testing, debugging, and deployment.
 
 ## Table of Contents
+
 1. [Local Development Setup](#local-development-setup)
 2. [Development Tools](#development-tools)
 3. [Testing Strategy](#testing-strategy)
@@ -20,6 +21,7 @@ This guide provides detailed instructions for developing the Embla application, 
    - Docker Compose 2.23+
 
 2. **Environment Setup**:
+
    ```bash
    # Clone the repository
    git clone <repository-url>
@@ -34,6 +36,7 @@ This guide provides detailed instructions for developing the Embla application, 
    ```
 
 3. **Start Services**:
+
    ```bash
    # Start all services
    just up
@@ -44,6 +47,7 @@ This guide provides detailed instructions for developing the Embla application, 
    ```
 
 4. **Initial Setup**:
+
    ```bash
    # Run migrations
    just manage migrate
@@ -58,6 +62,7 @@ This guide provides detailed instructions for developing the Embla application, 
 ### Option 2: Local Development Without Docker
 
 #### Frontend:
+
 ```bash
 cd frontend
 
@@ -69,6 +74,7 @@ bun run dev
 ```
 
 #### Backend:
+
 ```bash
 # Install uv (Python package manager)
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -86,6 +92,7 @@ uv run python manage.py runserver
 ## Development Tools
 
 ### Just Commands
+
 The project uses [Just](https://github.com/casey/just) as a task runner. Key commands:
 
 ```bash
@@ -118,12 +125,14 @@ just manage shell
 ### Code Quality Tools
 
 #### Frontend:
+
 - **ESLint**: `bun run lint` - Code linting with TypeScript, React, import sorting
 - **Prettier**: `bun run format` - Code formatting with Tailwind CSS plugin
 - **TypeScript**: `bun run type-check` - Type checking
 - **Vitest**: `bun run test` - Unit testing with coverage
 
 #### Backend:
+
 - **Ruff**: `uv run ruff check --fix` - Python linting and formatting
 - **mypy**: `uv run mypy embla` - Type checking
 - **pytest**: `uv run pytest` - Testing with coverage
@@ -133,6 +142,7 @@ just manage shell
 ### Frontend Testing
 
 #### Test Structure:
+
 ```
 frontend/src/
 ├── __tests__/
@@ -147,6 +157,7 @@ frontend/src/
 ```
 
 #### Running Tests:
+
 ```bash
 # All tests with coverage
 bun run test:ci
@@ -162,12 +173,14 @@ bun run test:coverage
 ```
 
 #### Writing Tests:
+
 - Use React Testing Library for component testing
 - Mock API calls with manual axios mocks
 - Test user interactions with `@testing-library/user-event`
 - Use custom render from `test-utils.tsx`
 
 Example:
+
 ```typescript
 import { render, screen, waitFor } from '../test-utils';
 import { Login } from '../pages/Login';
@@ -192,6 +205,7 @@ test('login form submits credentials', async () => {
 ### Backend Testing
 
 #### Running Tests:
+
 ```bash
 # All tests
 uv run pytest
@@ -209,12 +223,14 @@ uv run pytest -k "test_login"
 ```
 
 #### Writing Tests:
+
 - Use pytest fixtures for test data
 - Test API endpoints with Django test client
 - Use factory boy for test data creation
 - Mock external services
 
 Example:
+
 ```python
 import pytest
 from django.test import Client
@@ -241,12 +257,14 @@ def test_user_login(client: Client):
 ### Frontend Debugging
 
 #### Browser DevTools:
+
 - **React DevTools**: Install extension for component inspection
 - **Network Tab**: Monitor API requests and responses
 - **Console**: View logs and errors
 - **Sources**: Debug TypeScript source maps
 
 #### Docker Container Debugging:
+
 ```bash
 # Open shell in frontend container
 just frontend-shell
@@ -259,7 +277,9 @@ just frontend-restart
 ```
 
 #### Environment Variables:
+
 Check `.env.development` for correct API URL:
+
 ```bash
 VITE_API_URL=http://localhost:8000
 VITE_APP_ENV=development
@@ -268,10 +288,13 @@ VITE_APP_ENV=development
 ### Backend Debugging
 
 #### Django Debug Toolbar:
+
 Enabled in local development. Access at `/__debug__/`.
 
 #### Logging:
+
 Configured in `config/settings/local.py`:
+
 ```python
 LOGGING = {
     'version': 1,
@@ -289,6 +312,7 @@ LOGGING = {
 ```
 
 #### Docker Container Debugging:
+
 ```bash
 # Open shell in Django container
 docker compose exec django /bin/bash
@@ -303,7 +327,9 @@ just manage shell
 ## Code Quality
 
 ### Pre-commit Validation
+
 Run before committing code:
+
 ```bash
 cd frontend
 bun run validate  # type-check + lint + tests
@@ -315,12 +341,15 @@ uv run pytest
 ```
 
 ### CI/CD Pipeline
+
 GitHub Actions runs on PR and push to main:
+
 1. **Frontend Job**: Lint, type-check, test, build
 2. **Backend Job**: Docker build, migrations, pytest
 3. **Docker Build**: Frontend and backend image builds
 
 ### Code Review Checklist
+
 - [ ] Tests added/updated
 - [ ] TypeScript/Type hints added
 - [ ] Documentation updated
@@ -331,6 +360,7 @@ GitHub Actions runs on PR and push to main:
 ## Deployment
 
 ### Production Build
+
 ```bash
 # Build frontend
 cd frontend
@@ -341,6 +371,7 @@ bun run build
 ```
 
 ### Docker Production
+
 ```bash
 # Build production images
 docker compose -f docker-compose.production.yml build
@@ -350,7 +381,9 @@ docker compose -f docker-compose.production.yml up -d
 ```
 
 ### Environment Configuration
+
 Production requires:
+
 - `DJANGO_SECRET_KEY` (secure random string)
 - `DJANGO_DEBUG=False`
 - Database connection string
@@ -363,6 +396,7 @@ Production requires:
 ### Common Issues
 
 #### 1. Docker Port Conflicts
+
 ```bash
 # Check what's using ports
 lsof -i :3000  # Frontend
@@ -373,6 +407,7 @@ lsof -i :8025  # Mailpit
 ```
 
 #### 2. Database Issues
+
 ```bash
 # Reset database
 just prune
@@ -384,6 +419,7 @@ docker compose logs postgres
 ```
 
 #### 3. Frontend Build Issues
+
 ```bash
 # Clear node_modules and reinstall
 cd frontend
@@ -398,7 +434,9 @@ docker system prune -a
 ```
 
 #### 4. Backend Type Errors
+
 Pre-existing type errors in Django files are being tracked separately:
+
 - `embla/users/api/authentication.py`
 - `embla/users/api/jwt_views.py`
 - `embla/users/api/views.py`
@@ -407,12 +445,14 @@ Pre-existing type errors in Django files are being tracked separately:
 These are known issues not caused by current development work.
 
 #### 5. Authentication Issues
+
 - Ensure CORS is configured correctly
 - Check JWT token expiration
 - Verify cookie settings (httpOnly, secure, sameSite)
 - Test with browser devtools Network tab
 
 ### Getting Help
+
 1. Check existing GitHub issues
 2. Review CONTRIBUTING.md
 3. Use debugging tools above
@@ -421,12 +461,14 @@ These are known issues not caused by current development work.
 ## Performance Tips
 
 ### Frontend:
+
 - Use React.memo for expensive components
 - Implement code splitting with React.lazy
 - Optimize Tailwind CSS purge configuration
 - Use Vite's built-in optimizations
 
 ### Backend:
+
 - Use Django's `select_related` and `prefetch_related`
 - Implement caching with Redis
 - Use database indexes
@@ -435,11 +477,13 @@ These are known issues not caused by current development work.
 ## Monitoring
 
 ### Health Checks
+
 - Frontend: `http://localhost:3000/health`
 - Backend: `http://localhost:8000/health/`
 - Database: Django admin interface
 
 ### Logging
+
 - Application logs in Docker container output
 - Access logs for HTTP requests
 - Error tracking with Sentry (configured)

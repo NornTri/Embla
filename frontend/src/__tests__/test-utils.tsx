@@ -37,17 +37,13 @@ export const mockApiResponses = {
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        {children}
-      </BrowserRouter>
+      <BrowserRouter>{children}</BrowserRouter>
     </AuthProvider>
   )
 }
 
-const customRender = (
-  ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>
-) => render(ui, { wrapper: AllTheProviders, ...options })
+const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) =>
+  render(ui, { wrapper: AllTheProviders, ...options })
 
 // Re-export everything from testing-library
 export * from '@testing-library/react'
@@ -57,7 +53,7 @@ export { customRender as render }
 
 // Helper to wait for loading states
 export const waitForLoading = async (timeout = 100) => {
-  return new Promise(resolve => setTimeout(resolve, timeout))
+  return new Promise((resolve) => setTimeout(resolve, timeout))
 }
 
 // Helper to mock axios instance

@@ -51,7 +51,9 @@ describe('Login Page', () => {
   it('submits form and calls login API', async () => {
     mockAxiosInstance.get.mockResolvedValueOnce({}) // CSRF
     mockAxiosInstance.post.mockResolvedValueOnce({}) // token
-    mockAxiosInstance.get.mockResolvedValueOnce({ data: { id: 1, email: 'test@example.com', name: 'Test User' } }) // users/me
+    mockAxiosInstance.get.mockResolvedValueOnce({
+      data: { id: 1, email: 'test@example.com', name: 'Test User' },
+    }) // users/me
 
     const { user } = renderLogin()
 

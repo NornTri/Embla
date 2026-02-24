@@ -34,7 +34,9 @@ export const Home = () => {
             <div className="text-center">
               <h2 className="mb-4 text-2xl font-semibold text-gray-900">Welcome to Embla</h2>
               <p className="text-gray-600">You are logged in as {user?.name ?? user?.email}</p>
-              <p className="mt-2 text-gray-500">This is your dashboard. More features coming soon.</p>
+              <p className="mt-2 text-gray-500">
+                This is your dashboard. More features coming soon.
+              </p>
             </div>
           </div>
         </div>

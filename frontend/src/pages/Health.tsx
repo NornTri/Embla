@@ -32,9 +32,7 @@ export function HealthPage() {
       <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
         <div className="text-center">
           <h1 className="mb-4 text-2xl font-bold text-gray-900">Health Check</h1>
-          <p className="text-gray-600">
-            Health check page is not available in production mode.
-          </p>
+          <p className="text-gray-600">Health check page is not available in production mode.</p>
         </div>
       </div>
     )
@@ -60,13 +58,15 @@ export function HealthPage() {
               Last updated: {lastUpdated.toLocaleTimeString()}
             </span>
             {healthStatus && (
-              <span className={`rounded-full px-3 py-1 text-sm font-medium ${
-                healthStatus.frontend.status === 'healthy'
-                  ? 'bg-green-100 text-green-800'
-                  : healthStatus.frontend.status === 'degraded'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-red-100 text-red-800'
-              }`}>
+              <span
+                className={`rounded-full px-3 py-1 text-sm font-medium ${
+                  healthStatus.frontend.status === 'healthy'
+                    ? 'bg-green-100 text-green-800'
+                    : healthStatus.frontend.status === 'degraded'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800'
+                }`}
+              >
                 Overall: {healthStatus.frontend.status.toUpperCase()}
               </span>
             )}
@@ -105,13 +105,15 @@ export function HealthPage() {
             <div className="rounded-lg bg-white p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-bold text-gray-900">Frontend Application</h2>
-                <span className={`rounded-full px-3 py-1 text-sm font-medium ${
-                  healthStatus.frontend.status === 'healthy'
-                    ? 'bg-green-100 text-green-800'
-                    : healthStatus.frontend.status === 'degraded'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800'
-                }`}>
+                <span
+                  className={`rounded-full px-3 py-1 text-sm font-medium ${
+                    healthStatus.frontend.status === 'healthy'
+                      ? 'bg-green-100 text-green-800'
+                      : healthStatus.frontend.status === 'degraded'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-red-100 text-red-800'
+                  }`}
+                >
                   {healthStatus.frontend.status.toUpperCase()}
                 </span>
               </div>
@@ -123,63 +125,80 @@ export function HealthPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Environment</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Environment
+                  </label>
                   <div className="rounded border border-gray-200 bg-gray-50 px-3 py-2">
                     {healthStatus.frontend.environment}
                   </div>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Screen Resolution</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Screen Resolution
+                  </label>
                   <div className="rounded border border-gray-200 bg-gray-50 px-3 py-2">
                     {healthStatus.frontend.screenResolution}
                   </div>
                 </div>
-                {healthStatus.frontend.memory.usedJSHeapSize && healthStatus.frontend.memory.totalJSHeapSize && healthStatus.frontend.memory.jsHeapSizeLimit && (
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">Memory Usage</label>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Used:</span>
-                        <span className="font-mono">
-                          {(healthStatus.frontend.memory.usedJSHeapSize / 1024 / 1024).toFixed(2)} MB
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Total:</span>
-                        <span className="font-mono">
-                          {(healthStatus.frontend.memory.totalJSHeapSize / 1024 / 1024).toFixed(2)} MB
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>Limit:</span>
-                        <span className="font-mono">
-                          {(healthStatus.frontend.memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)} MB
-                        </span>
-                      </div>
-                      <div className="h-2 w-full rounded-full bg-gray-200">
-                        <div
-                          className="h-2 rounded-full bg-blue-600"
-                          style={{
-                            width: `${(healthStatus.frontend.memory.usedJSHeapSize / healthStatus.frontend.memory.jsHeapSizeLimit) * 100}%`,
-                          }}
-                        ></div>
+                {healthStatus.frontend.memory.usedJSHeapSize &&
+                  healthStatus.frontend.memory.totalJSHeapSize &&
+                  healthStatus.frontend.memory.jsHeapSizeLimit && (
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-gray-700">
+                        Memory Usage
+                      </label>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Used:</span>
+                          <span className="font-mono">
+                            {(healthStatus.frontend.memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}{' '}
+                            MB
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Total:</span>
+                          <span className="font-mono">
+                            {(healthStatus.frontend.memory.totalJSHeapSize / 1024 / 1024).toFixed(
+                              2
+                            )}{' '}
+                            MB
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Limit:</span>
+                          <span className="font-mono">
+                            {(healthStatus.frontend.memory.jsHeapSizeLimit / 1024 / 1024).toFixed(
+                              2
+                            )}{' '}
+                            MB
+                          </span>
+                        </div>
+                        <div className="h-2 w-full rounded-full bg-gray-200">
+                          <div
+                            className="h-2 rounded-full bg-blue-600"
+                            style={{
+                              width: `${(healthStatus.frontend.memory.usedJSHeapSize / healthStatus.frontend.memory.jsHeapSizeLimit) * 100}%`,
+                            }}
+                          ></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             </div>
 
             <div className="rounded-lg bg-white p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-bold text-gray-900">API Connectivity</h2>
-                <span className={`rounded-full px-3 py-1 text-sm font-medium ${
-                  healthStatus.api.status === 'healthy'
-                    ? 'bg-green-100 text-green-800'
-                    : healthStatus.api.status === 'error'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800'
-                }`}>
+                <span
+                  className={`rounded-full px-3 py-1 text-sm font-medium ${
+                    healthStatus.api.status === 'healthy'
+                      ? 'bg-green-100 text-green-800'
+                      : healthStatus.api.status === 'error'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-red-100 text-red-800'
+                  }`}
+                >
                   {healthStatus.api.status.toUpperCase()}
                 </span>
               </div>
@@ -192,18 +211,25 @@ export function HealthPage() {
                 </div>
                 {healthStatus.api.responseTime && (
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-gray-700">Response Time</label>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                      Response Time
+                    </label>
                     <div className="rounded border border-gray-200 bg-gray-50 px-3 py-2">
                       <span className="font-mono">{healthStatus.api.responseTime}ms</span>
-                      <span className={`ml-2 rounded-full px-2 py-1 text-xs ${
-                        healthStatus.api.responseTime < 100
-                          ? 'bg-green-100 text-green-800'
+                      <span
+                        className={`ml-2 rounded-full px-2 py-1 text-xs ${
+                          healthStatus.api.responseTime < 100
+                            ? 'bg-green-100 text-green-800'
+                            : healthStatus.api.responseTime < 500
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {healthStatus.api.responseTime < 100
+                          ? 'Fast'
                           : healthStatus.api.responseTime < 500
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                      }`}>
-                        {healthStatus.api.responseTime < 100 ? 'Fast' :
-                         healthStatus.api.responseTime < 500 ? 'Moderate' : 'Slow'}
+                            ? 'Moderate'
+                            : 'Slow'}
                       </span>
                     </div>
                   </div>
@@ -235,34 +261,42 @@ export function HealthPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">Storage Support</label>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Storage Support
+                  </label>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
-                      <div className={`mb-2 inline-flex size-10 items-center justify-center rounded-full ${
-                        healthStatus.browser.cookiesEnabled
-                          ? 'bg-green-100 text-green-600'
-                          : 'bg-red-100 text-red-600'
-                      }`}>
+                      <div
+                        className={`mb-2 inline-flex size-10 items-center justify-center rounded-full ${
+                          healthStatus.browser.cookiesEnabled
+                            ? 'bg-green-100 text-green-600'
+                            : 'bg-red-100 text-red-600'
+                        }`}
+                      >
                         {healthStatus.browser.cookiesEnabled ? '\u2713' : '\u2717'}
                       </div>
                       <div className="text-sm font-medium">Cookies</div>
                     </div>
                     <div className="text-center">
-                      <div className={`mb-2 inline-flex size-10 items-center justify-center rounded-full ${
-                        healthStatus.browser.localStorageEnabled
-                          ? 'bg-green-100 text-green-600'
-                          : 'bg-red-100 text-red-600'
-                      }`}>
+                      <div
+                        className={`mb-2 inline-flex size-10 items-center justify-center rounded-full ${
+                          healthStatus.browser.localStorageEnabled
+                            ? 'bg-green-100 text-green-600'
+                            : 'bg-red-100 text-red-600'
+                        }`}
+                      >
                         {healthStatus.browser.localStorageEnabled ? '\u2713' : '\u2717'}
                       </div>
                       <div className="text-sm font-medium">Local Storage</div>
                     </div>
                     <div className="text-center">
-                      <div className={`mb-2 inline-flex size-10 items-center justify-center rounded-full ${
-                        healthStatus.browser.sessionStorageEnabled
-                          ? 'bg-green-100 text-green-600'
-                          : 'bg-red-100 text-red-600'
-                      }`}>
+                      <div
+                        className={`mb-2 inline-flex size-10 items-center justify-center rounded-full ${
+                          healthStatus.browser.sessionStorageEnabled
+                            ? 'bg-green-100 text-green-600'
+                            : 'bg-red-100 text-red-600'
+                        }`}
+                      >
                         {healthStatus.browser.sessionStorageEnabled ? '\u2713' : '\u2717'}
                       </div>
                       <div className="text-sm font-medium">Session Storage</div>

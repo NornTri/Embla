@@ -5,17 +5,21 @@ Thank you for your interest in contributing to Embla! This document provides gui
 ## Development Environment Setup
 
 ### Prerequisites
+
 - Docker and Docker Compose
 - Bun (for frontend development)
 - Python 3.13+ with uv (for backend development)
 
 ### Quick Start
+
 1. Clone the repository:
+
    ```bash
    git clone <repository-url>
    ```
 
 2. Start the development environment:
+
    ```bash
    just up
    ```
@@ -27,6 +31,7 @@ Thank you for your interest in contributing to Embla! This document provides gui
    - Mailpit (email testing): http://localhost:8025
 
 ### Using Just (Task Runner)
+
 The project uses [Just](https://github.com/casey/just) as a task runner. Key commands:
 
 ```bash
@@ -57,6 +62,7 @@ just frontend-validate # Run all validation steps
 ## Development Workflow
 
 ### 1. Branch Strategy
+
 - Create feature branches from `main`
 - Use descriptive branch names: `feature/description`, `fix/issue-name`, `docs/topic`
 - Keep branches focused on single features or fixes
@@ -64,24 +70,28 @@ just frontend-validate # Run all validation steps
 ### 2. Code Standards
 
 #### Frontend (React + TypeScript)
+
 - **Linting**: ESLint with TypeScript, React hooks, import sorting
 - **Formatting**: Prettier with Tailwind CSS plugin
 - **Type Checking**: TypeScript strict mode enabled
 - **Testing**: Vitest + React Testing Library
 
 Run validation:
+
 ```bash
 cd frontend
 bun run validate  # Runs type-check, lint, and tests
 ```
 
 #### Backend (Django)
+
 - **Code Style**: Black formatting, isort for imports
 - **Linting**: Ruff for Python linting
 - **Type Checking**: mypy
 - **Testing**: pytest with coverage
 
 Run validation:
+
 ```bash
 uv run mypy embla
 uv run ruff check --fix
@@ -89,13 +99,16 @@ uv run pytest
 ```
 
 ### 3. Testing
+
 - Write tests for all new functionality
 - Maintain or improve test coverage
 - Frontend tests should use React Testing Library
 - Backend tests should use pytest fixtures
 
 ### 4. Commit Messages
+
 Use clear, descriptive commit messages following this format:
+
 ```
 type(scope): brief description
 
@@ -106,6 +119,7 @@ Detailed description if needed
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -115,6 +129,7 @@ Types:
 - `chore`: Maintenance tasks
 
 ### 5. Pull Request Process
+
 1. **Create PR**: Target the `main` branch
 2. **Description**: Include:
    - Purpose of changes
@@ -148,12 +163,14 @@ Embla/
 ## Environment Configuration
 
 ### Frontend (.env.development)
+
 ```
 VITE_API_URL=http://localhost:8000
 VITE_APP_ENV=development
 ```
 
 ### Backend (.envs/.local/.django)
+
 ```
 DJANGO_SETTINGS_MODULE=config.settings.local
 DJANGO_SECRET_KEY=your-secret-key
@@ -163,12 +180,14 @@ DJANGO_DEBUG=True
 ## Testing Guidelines
 
 ### Frontend Tests
+
 - Use `@testing-library/react` for component testing
 - Mock API calls with axios mocks
 - Test user interactions with `@testing-library/user-event`
 - Use custom render from `test-utils.tsx`
 
 Example:
+
 ```typescript
 import { render, screen } from '../test-utils';
 
@@ -179,6 +198,7 @@ test('renders login form', () => {
 ```
 
 ### Backend Tests
+
 - Use pytest fixtures for test data
 - Test API endpoints with Django test client
 - Mock external services
@@ -187,25 +207,30 @@ test('renders login form', () => {
 ## Common Issues & Solutions
 
 ### Docker Issues
+
 - **Port conflicts**: Check if ports 3000, 8000, 8025 are in use
 - **Build cache**: Use `docker system prune` to clear cache
 - **Volume conflicts**: Use `just prune` to remove containers and volumes
 
 ### Database Issues
+
 - **Migrations**: Run `just manage migrate`
 - **Reset database**: Use `just prune` and restart
 
 ### Frontend Issues
+
 - **Node modules**: Run `just frontend-install`
 - **Type errors**: Run `just frontend-type-check`
 - **Build failures**: Check `.env` configuration
 
 ## Getting Help
+
 - Check existing issues for similar problems
 - Review project documentation
 - Ask in PR discussions
 
 ## Code of Conduct
+
 Please be respectful and constructive in all communications. Follow the project's code standards and review guidelines.
 
 ---

@@ -78,6 +78,8 @@ describe('Home Page', () => {
 
     render(<Home />)
 
-    expect(screen.getByText(new RegExp(`you are logged in as ${mockUser.email}`, 'i'))).toBeInTheDocument()
+    expect(
+      screen.getByText(new RegExp(`you are logged in as ${mockUser.email}`, 'i'))
+    ).toBeInTheDocument()
   })
 })

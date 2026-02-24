@@ -31,7 +31,11 @@ describe('PrivateRoute', () => {
       loading: true,
     })
 
-    render(<PrivateRoute><TestChild /></PrivateRoute>)
+    render(
+      <PrivateRoute>
+        <TestChild />
+      </PrivateRoute>
+    )
 
     expect(screen.getByText('Loading...')).toBeInTheDocument()
     expect(screen.queryByTestId('test-child')).not.toBeInTheDocument()
@@ -43,7 +47,11 @@ describe('PrivateRoute', () => {
       loading: false,
     })
 
-    render(<PrivateRoute><TestChild /></PrivateRoute>)
+    render(
+      <PrivateRoute>
+        <TestChild />
+      </PrivateRoute>
+    )
 
     expect(screen.queryByTestId('test-child')).not.toBeInTheDocument()
     expect(screen.queryByText('Loading...')).not.toBeInTheDocument()
@@ -55,7 +63,11 @@ describe('PrivateRoute', () => {
       loading: false,
     })
 
-    render(<PrivateRoute><TestChild /></PrivateRoute>)
+    render(
+      <PrivateRoute>
+        <TestChild />
+      </PrivateRoute>
+    )
 
     expect(screen.getByTestId('test-child')).toBeInTheDocument()
     expect(screen.queryByText('Loading...')).not.toBeInTheDocument()

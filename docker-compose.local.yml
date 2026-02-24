@@ -21,7 +21,7 @@ services:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
     ports:
-      - '8000:8000'
+      - "8000:8000"
     command: /start
 
   postgres:
@@ -75,7 +75,7 @@ services:
     image: embla_local_flower
     container_name: embla_local_flower
     ports:
-      - '5555:5555'
+      - "5555:5555"
     command: /start-flower
 
   frontend:
@@ -85,7 +85,7 @@ services:
     image: embla_local_frontend
     container_name: embla_local_frontend
     ports:
-      - '3000:3000'
+      - "3000:3000"
     volumes:
       - ./frontend:/app:z
       - /app/node_modules

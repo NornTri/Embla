@@ -1,0 +1,3 @@
+.venv
+embla/templates/allauth/elements/button.html
+embla/templates/allauth/elements/field.html

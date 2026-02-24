@@ -13,5 +13,5 @@ services:
       - ./config:/app/config:z
       - ./embla:/app/embla:z
     ports:
-      - '9000:9000'
+      - "9000:9000"
     command: /start-docs

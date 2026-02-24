@@ -6,6 +6,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import importPlugin from 'eslint-plugin-import'
 import tailwind from 'eslint-plugin-tailwindcss'
 import globals from 'globals'
+import prettierConfig from 'eslint-config-prettier'
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
@@ -98,10 +99,7 @@ export default [
       // React rules
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       // Import rules
       'import/order': [
         'error',
@@ -145,8 +143,8 @@ export default [
       // General code quality rules
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
-      'curly': ['error', 'all'],
-      'eqeqeq': ['error', 'always'],
+      curly: ['error', 'all'],
+      eqeqeq: ['error', 'always'],
       'no-alert': 'error',
       'no-eval': 'error',
       'no-implied-eval': 'error',
@@ -157,8 +155,8 @@ export default [
       'prefer-const': 'error',
       'prefer-template': 'error',
       'quote-props': ['error', 'consistent-as-needed'],
-      'quotes': ['error', 'single', { avoidEscape: true }],
-      'semi': ['error', 'never'],
+      quotes: ['error', 'single', { avoidEscape: true }],
+      semi: ['error', 'never'],
       // Tailwind CSS class sorting
       'tailwindcss/classnames-order': 'warn',
       'tailwindcss/enforces-shorthand': 'warn',
@@ -173,13 +171,7 @@ export default [
       tailwindcss: {
         callees: ['classnames', 'clsx', 'cn'],
         config: './tailwind.config.js',
-        cssFiles: [
-          '**/*.css',
-          '**/*.scss',
-          '**/*.sass',
-          '!**/node_modules',
-          '!**/.*',
-        ],
+        cssFiles: ['**/*.css', '**/*.scss', '**/*.sass', '!**/node_modules', '!**/.*'],
       },
     },
   },
@@ -228,4 +220,6 @@ export default [
       '.eslint.config.js',
     ],
   },
+  // Disable ESLint rules that conflict with Prettier
+  prettierConfig,
 ]

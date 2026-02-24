@@ -89,7 +89,8 @@ export async function checkHealth(): Promise<HealthStatus> {
   }
 
   if (status.frontend.memory.usedJSHeapSize && status.frontend.memory.jsHeapSizeLimit) {
-    const memoryUsagePercent = (status.frontend.memory.usedJSHeapSize / status.frontend.memory.jsHeapSizeLimit) * 100
+    const memoryUsagePercent =
+      (status.frontend.memory.usedJSHeapSize / status.frontend.memory.jsHeapSizeLimit) * 100
     if (memoryUsagePercent > 90) {
       status.frontend.status = 'degraded'
     }
@@ -112,11 +113,21 @@ function getMemoryInfo(): HealthStatus['frontend']['memory'] {
 
 function getBrowserName(): string {
   const userAgent = navigator.userAgent
-  if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) { return 'Chrome' }
-  if (userAgent.includes('Firefox')) { return 'Firefox' }
-  if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) { return 'Safari' }
-  if (userAgent.includes('Edg')) { return 'Edge' }
-  if (userAgent.includes('Opera') || userAgent.includes('OPR')) { return 'Opera' }
+  if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) {
+    return 'Chrome'
+  }
+  if (userAgent.includes('Firefox')) {
+    return 'Firefox'
+  }
+  if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+    return 'Safari'
+  }
+  if (userAgent.includes('Edg')) {
+    return 'Edge'
+  }
+  if (userAgent.includes('Opera') || userAgent.includes('OPR')) {
+    return 'Opera'
+  }
   return 'Unknown'
 }
 
@@ -150,22 +161,24 @@ function testSessionStorage(): boolean {
 
 export function logHealthStatus(): void {
   if (import.meta.env.VITE_APP_ENV === 'development') {
-    checkHealth().then(status => {
-      // eslint-disable-next-line no-console
-      console.group('Application Health Status')
-      // eslint-disable-next-line no-console
-      console.log('Timestamp:', status.timestamp)
-      // eslint-disable-next-line no-console
-      console.log('Frontend:', status.frontend)
-      // eslint-disable-next-line no-console
-      console.log('API:', status.api)
-      // eslint-disable-next-line no-console
-      console.log('Browser:', status.browser)
-      // eslint-disable-next-line no-console
-      console.groupEnd()
-    }).catch((error: unknown) => {
-      console.error('Health check failed:', error)
-    })
+    checkHealth()
+      .then((status) => {
+        // eslint-disable-next-line no-console
+        console.group('Application Health Status')
+        // eslint-disable-next-line no-console
+        console.log('Timestamp:', status.timestamp)
+        // eslint-disable-next-line no-console
+        console.log('Frontend:', status.frontend)
+        // eslint-disable-next-line no-console
+        console.log('API:', status.api)
+        // eslint-disable-next-line no-console
+        console.log('Browser:', status.browser)
+        // eslint-disable-next-line no-console
+        console.groupEnd()
+      })
+      .catch((error: unknown) => {
+        console.error('Health check failed:', error)
+      })
   }
 }
 
@@ -178,13 +191,15 @@ export function startHealthMonitoring(intervalMs = 30000): () => void {
   console.log(`Starting health monitoring with ${String(intervalMs)}ms interval`)
 
   const intervalId = setInterval(() => {
-    checkHealth().then(status => {
-      if (status.frontend.status === 'unhealthy' || status.api.status === 'unreachable') {
-        console.warn('Health check warning:', status)
-      }
-    }).catch((error: unknown) => {
-      console.error('Health monitoring error:', error)
-    })
+    checkHealth()
+      .then((status) => {
+        if (status.frontend.status === 'unhealthy' || status.api.status === 'unreachable') {
+          console.warn('Health check warning:', status)
+        }
+      })
+      .catch((error: unknown) => {
+        console.error('Health monitoring error:', error)
+      })
   }, intervalMs)
 
   return () => {

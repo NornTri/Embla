@@ -167,8 +167,11 @@ export function initDevTools(): () => void {
     reactVersion: React.version,
     perf: new PerformanceMonitor(),
     utils: {
-      logHealthStatus: () => import('./health').then(m => { m.logHealthStatus() }),
-      checkHealth: () => import('./health').then(m => m.checkHealth()),
+      logHealthStatus: () =>
+        import('./health').then((m) => {
+          m.logHealthStatus()
+        }),
+      checkHealth: () => import('./health').then((m) => m.checkHealth()),
     },
   }
 

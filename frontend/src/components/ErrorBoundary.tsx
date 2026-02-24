@@ -106,16 +106,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 />
               </svg>
             </div>
-            <h1 className="mb-2 text-2xl font-bold text-gray-900">
-              Something went wrong
-            </h1>
+            <h1 className="mb-2 text-2xl font-bold text-gray-900">Something went wrong</h1>
             <p className="mb-6 text-gray-600">
               An error occurred while rendering this page. Our team has been notified.
             </p>
           </div>
 
           <div className="space-y-6">
-            {(import.meta.env.VITE_APP_ENV === 'development' && error) && (
+            {import.meta.env.VITE_APP_ENV === 'development' && error && (
               <div className="overflow-hidden rounded-lg border border-gray-200">
                 <details className="group">
                   <summary className="flex cursor-pointer items-center justify-between bg-gray-50 p-4 hover:bg-gray-100">
