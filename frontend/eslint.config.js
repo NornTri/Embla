@@ -198,6 +198,14 @@ export default [
       'no-console': 'off',
     },
   },
+  // shadcn/ui components - relax rules for third-party generated code
+  {
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+    },
+  },
   // Ignore patterns
   {
     ignores: [
