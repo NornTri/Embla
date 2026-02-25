@@ -18,6 +18,9 @@ from embla.users.api.views import logout
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
+    # User management
+    path("users/", include("embla.users.urls")),
+    path("accounts/", include("allauth.urls")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
