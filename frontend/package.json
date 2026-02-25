@@ -16,8 +16,7 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:ci": "vitest run --coverage",
-    "validate": "bun run type-check && bun run lint && bun run test:ci",
-    "prepare": "cd .. && husky frontend/.husky"
+    "validate": "bun run type-check && bun run lint && bun run test:ci"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
