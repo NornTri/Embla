@@ -164,19 +164,19 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <div className="flex flex-col gap-4 pt-4 sm:flex-row">
               <button
                 onClick={this.handleReset}
-                className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="flex-1 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
               >
                 Try Again
               </button>
               <button
                 onClick={this.handleReload}
-                className="flex-1 rounded-lg bg-gray-200 px-6 py-3 font-medium text-gray-800 transition-colors hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+                className="flex-1 rounded-lg bg-gray-200 px-6 py-3 font-medium text-gray-800 transition-colors hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:outline-none"
               >
                 Reload Page
               </button>
               <a
                 href="/"
-                className="flex-1 rounded-lg bg-gray-800 px-6 py-3 text-center font-medium text-white transition-colors hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
+                className="flex-1 rounded-lg bg-gray-800 px-6 py-3 text-center font-medium text-white transition-colors hover:bg-gray-900 focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:outline-none"
               >
                 Go to Home
               </a>

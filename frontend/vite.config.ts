@@ -1,19 +1,19 @@
 import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react'
-import reactSwc from '@vitejs/plugin-react-swc'
+import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react-swc'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  // Load env file based on `mode` in the current directory and parent directories
   const env = loadEnv(mode, process.cwd(), '')
 
   return {
-    plugins: [
-      // Use SWC for faster refresh in development
-      reactSwc(),
-      // Fallback to Babel-based plugin if SWC has issues
-      react(),
-    ],
+    plugins: [react(), tailwindcss()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
     server: {
       port: 3000,
       host: true,
@@ -46,7 +46,6 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    // Optimize dependencies for faster startup
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-router-dom', 'axios'],
       esbuildOptions: {

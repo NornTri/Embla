@@ -4,7 +4,6 @@ import tsParser from '@typescript-eslint/parser'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import importPlugin from 'eslint-plugin-import'
-import tailwind from 'eslint-plugin-tailwindcss'
 import globals from 'globals'
 import prettierConfig from 'eslint-config-prettier'
 
@@ -18,7 +17,6 @@ export default [
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       import: importPlugin,
-      tailwindcss: tailwind,
     },
     languageOptions: {
       parser: tsParser,
@@ -157,21 +155,12 @@ export default [
       'quote-props': ['error', 'consistent-as-needed'],
       quotes: ['error', 'single', { avoidEscape: true }],
       semi: ['error', 'never'],
-      // Tailwind CSS class sorting
-      'tailwindcss/classnames-order': 'warn',
-      'tailwindcss/enforces-shorthand': 'warn',
-      'tailwindcss/no-contradicting-classname': 'error',
     },
     settings: {
       'import/resolver': {
         typescript: {
           project: './tsconfig.json',
         },
-      },
-      tailwindcss: {
-        callees: ['classnames', 'clsx', 'cn'],
-        config: './tailwind.config.js',
-        cssFiles: ['**/*.css', '**/*.scss', '**/*.sass', '!**/node_modules', '!**/.*'],
       },
     },
   },

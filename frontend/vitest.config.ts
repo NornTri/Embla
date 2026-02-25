@@ -1,14 +1,9 @@
 import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import reactSwc from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react-swc'
+import path from 'path'
 
 export default defineConfig({
-  plugins: [
-    // Use SWC for faster transformations in tests
-    reactSwc(),
-    // Fallback to Babel-based plugin if SWC has issues
-    react(),
-  ],
+  plugins: [react()],
   test: {
     environment: 'jsdom',
     globals: true,
@@ -18,26 +13,25 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       exclude: [
+        'dist/',
         'node_modules/',
         'src/__tests__/',
+        'src/__mocks__/',
         '**/*.d.ts',
         '**/*.config.*',
         '**/*.test.*',
         '**/*.spec.*',
       ],
     },
-    // Match test files
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    // Mock environment variables for testing
     env: {
       VITE_API_URL: 'http://test-api.local',
       NODE_ENV: 'test',
     },
   },
   resolve: {
-    // Match Vite's resolve configuration
     alias: {
-      '@': '/src',
+      '@': path.resolve(__dirname, './src'),
     },
   },
 })
