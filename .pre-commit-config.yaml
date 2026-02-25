@@ -47,6 +47,13 @@ repos:
         files: ^frontend/
         types_or: [javascript, jsx, ts, tsx]
         pass_filenames: false
+      - id: frontend-typecheck
+        name: frontend typecheck
+        entry: bash -c 'export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" && cd frontend && bun run type-check'
+        language: system
+        files: ^frontend/
+        types_or: [javascript, jsx, ts, tsx]
+        pass_filenames: false
       - id: frontend-format
         name: frontend prettier
         entry: bash -c 'export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" && cd frontend && bun run format:check'
