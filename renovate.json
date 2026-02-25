@@ -1,0 +1,52 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "schedule": ["every weekday"],
+  "packageRules": [
+    {
+      "description": "Group GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    },
+    {
+      "description": "Group Docker updates (Python images) — patch only",
+      "matchManagers": ["dockerfile"],
+      "matchFileNames": [
+        "compose/local/django/**",
+        "compose/local/docs/**",
+        "compose/production/django/**"
+      ],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "docker-python"
+    },
+    {
+      "description": "Ignore major/minor for Python Docker images",
+      "matchManagers": ["dockerfile"],
+      "matchFileNames": [
+        "compose/local/django/**",
+        "compose/local/docs/**",
+        "compose/production/django/**"
+      ],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
+    },
+    {
+      "description": "Group Python dependencies — minor and patch",
+      "matchManagers": ["pep621"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "python"
+    },
+    {
+      "description": "Ignore Django 6.x (not yet supported by django-celery-beat)",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["django"],
+      "allowedVersions": "<6"
+    },
+    {
+      "description": "Group frontend dependencies — minor and patch",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "frontend"
+    }
+  ]
+}
