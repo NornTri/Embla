@@ -112,7 +112,13 @@ jobs:
         run: |
           mkdir -p .envs/.local
           touch .env
-          touch .envs/.local/.django
+          cat > .envs/.local/.django <<'EOF'
+          USE_DOCKER=yes
+          IPYTHONDIR=/app/.ipython
+          REDIS_URL=redis://redis:6379/0
+          CELERY_FLOWER_USER=debug
+          CELERY_FLOWER_PASSWORD=debug
+          EOF
           touch .envs/.local/.postgres
 
       - name: Set up Docker Buildx
@@ -142,7 +148,13 @@ jobs:
         run: |
           mkdir -p .envs/.local
           touch .env
-          touch .envs/.local/.django
+          cat > .envs/.local/.django <<'EOF'
+          USE_DOCKER=yes
+          IPYTHONDIR=/app/.ipython
+          REDIS_URL=redis://redis:6379/0
+          CELERY_FLOWER_USER=debug
+          CELERY_FLOWER_PASSWORD=debug
+          EOF
           cat > .envs/.local/.postgres <<'EOF'
           POSTGRES_HOST=postgres
           POSTGRES_PORT=5432
