@@ -6,7 +6,7 @@ from embla.users.api.views import UserViewSet
 
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
-router.register("users", UserViewSet)
+router.register("users", UserViewSet, basename="user")
 
 
 app_name = "api"
