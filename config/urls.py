@@ -18,6 +18,8 @@ from embla.users.api.views import logout
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
+    # Control Room (admin dashboard for Redis, Celery, etc.)
+    path("admin/control-room/", include("control_room.urls")),
     # User management
     path("users/", include("embla.users.urls")),
     path("accounts/", include("allauth.urls")),
