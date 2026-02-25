@@ -14,7 +14,7 @@ vi.mock('../contexts/AuthContext', async (importOriginal) => {
 })
 
 // Need to import after mock
-import { useAuth } from '../contexts/AuthContext' // eslint-disable-line import/order
+import { useAuth } from '../contexts/AuthContext' // eslint-disable-line import-x/order
 
 const mockedUseAuth = useAuth as Mock
 
