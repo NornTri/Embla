@@ -30,13 +30,13 @@ describe('Home Page', () => {
     vi.clearAllMocks()
   })
 
-  it('renders user email and logout button when authenticated', () => {
+  it('renders user email and logout button when authenticated', async () => {
     mockedUseAuth.mockReturnValue({
       user: mockUser,
       logout: vi.fn(),
     })
 
-    render(<Home />)
+    await render(<Home />)
 
     expect(screen.getByText(mockUser.email)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /logout/i })).toBeInTheDocument()
@@ -51,7 +51,7 @@ describe('Home Page', () => {
     })
 
     const user = userEvent.setup()
-    render(<Home />)
+    await render(<Home />)
 
     const logoutButton = screen.getByRole('button', { name: /logout/i })
     await user.click(logoutButton)
@@ -59,24 +59,24 @@ describe('Home Page', () => {
     expect(mockLogout).toHaveBeenCalledTimes(1)
   })
 
-  it('shows user name if available', () => {
+  it('shows user name if available', async () => {
     mockedUseAuth.mockReturnValue({
       user: { ...mockUser, name: 'John Doe' },
       logout: vi.fn(),
     })
 
-    render(<Home />)
+    await render(<Home />)
 
     expect(screen.getByText(/you are logged in as John Doe/i)).toBeInTheDocument()
   })
 
-  it('shows email if name is not available', () => {
+  it('shows email if name is not available', async () => {
     mockedUseAuth.mockReturnValue({
       user: { ...mockUser, name: null },
       logout: vi.fn(),
     })
 
-    render(<Home />)
+    await render(<Home />)
 
     expect(
       screen.getByText(new RegExp(`you are logged in as ${mockUser.email}`, 'i'))

@@ -2,7 +2,7 @@ import React, { type ReactElement } from 'react'
 
 import { BrowserRouter } from 'react-router-dom'
 
-import { render, type RenderOptions } from '@testing-library/react'
+import { act, render, type RenderOptions } from '@testing-library/react'
 
 import { AuthProvider } from '../contexts/AuthContext'
 
@@ -42,8 +42,13 @@ const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) =>
-  render(ui, { wrapper: AllTheProviders, ...options })
+const customRender = async (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) => {
+  let result: ReturnType<typeof render>
+  await act(async () => {
+    result = render(ui, { wrapper: AllTheProviders, ...options })
+  })
+  return result!
+}
 
 // Re-export everything from testing-library
 export * from '@testing-library/react'

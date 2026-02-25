@@ -3,10 +3,10 @@ import { vi } from 'vitest'
 
 // Create a mock axios instance
 const mockAxiosInstance = {
-  get: vi.fn(),
-  post: vi.fn(),
-  put: vi.fn(),
-  delete: vi.fn(),
+  get: vi.fn().mockRejectedValue(new Error('Not mocked')),
+  post: vi.fn().mockRejectedValue(new Error('Not mocked')),
+  put: vi.fn().mockRejectedValue(new Error('Not mocked')),
+  delete: vi.fn().mockRejectedValue(new Error('Not mocked')),
   defaults: {
     withCredentials: false,
     xsrfCookieName: '',

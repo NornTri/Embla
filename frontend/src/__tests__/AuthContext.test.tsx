@@ -5,7 +5,7 @@ import { vi } from 'vitest'
 import { mockAxiosInstance } from '../__mocks__/axios'
 import { useAuth } from '../contexts/AuthContext'
 
-import { render, screen, waitFor, mockUser } from './test-utils'
+import { act, render, screen, waitFor, mockUser } from './test-utils'
 
 // Reset mock instance before each test
 const resetMockAxiosInstance = () => {
@@ -45,7 +45,7 @@ describe('AuthContext', () => {
       // Mock the initial auth check to never resolve (simulate loading)
       mockAxiosInstance.get.mockImplementation(() => new Promise(() => {}))
 
-      render(<TestComponent />)
+      await render(<TestComponent />)
 
       // Should show loading as true initially
       expect(screen.getByTestId('loading')).toHaveTextContent('true')
@@ -57,15 +57,10 @@ describe('AuthContext', () => {
       // Mock successful auth check
       mockAxiosInstance.get.mockResolvedValueOnce({ data: mockUser })
 
-      render(<TestComponent />)
+      await render(<TestComponent />)
 
-      // Initially loading
-      expect(screen.getByTestId('loading')).toHaveTextContent('true')
-
-      // Wait for loading to finish
-      await waitFor(() => {
-        expect(screen.getByTestId('loading')).toHaveTextContent('false')
-      })
+      // After render with act(), async effects have settled
+      expect(screen.getByTestId('loading')).toHaveTextContent('false')
 
       // Should be authenticated with user data
       expect(screen.getByTestId('isAuthenticated')).toHaveTextContent('true')
@@ -79,7 +74,7 @@ describe('AuthContext', () => {
       // Mock failed auth check
       mockAxiosInstance.get.mockRejectedValueOnce(new Error('Not authenticated'))
 
-      render(<TestComponent />)
+      await render(<TestComponent />)
 
       await waitFor(() => {
         expect(screen.getByTestId('loading')).toHaveTextContent('false')
@@ -120,9 +115,11 @@ describe('AuthContext', () => {
         )
       }
 
-      render(<LoginTestComponent />)
+      await render(<LoginTestComponent />)
 
-      screen.getByText('Login').click()
+      await act(async () => {
+        screen.getByText('Login').click()
+      })
 
       await waitFor(() => {
         expect(screen.getByTestId('user')).toHaveTextContent(mockUser.email)
@@ -165,9 +162,11 @@ describe('AuthContext', () => {
         )
       }
 
-      render(<LoginTestComponent />)
+      await render(<LoginTestComponent />)
 
-      screen.getByText('Login').click()
+      await act(async () => {
+        screen.getByText('Login').click()
+      })
 
       await waitFor(() => {
         expect(screen.getByTestId('error')).toHaveTextContent('Login failed')
@@ -199,13 +198,13 @@ describe('AuthContext', () => {
         )
       }
 
-      render(<LogoutTestComponent />)
+      await render(<LogoutTestComponent />)
 
-      await waitFor(() => {
-        expect(screen.getByTestId('user')).toHaveTextContent(mockUser.email)
+      expect(screen.getByTestId('user')).toHaveTextContent(mockUser.email)
+
+      await act(async () => {
+        screen.getByText('Logout').click()
       })
-
-      screen.getByText('Logout').click()
 
       await waitFor(() => {
         expect(screen.getByTestId('user')).toHaveTextContent('null')

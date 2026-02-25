@@ -25,13 +25,13 @@ describe('PrivateRoute', () => {
     vi.clearAllMocks()
   })
 
-  it('renders loading indicator when loading', () => {
+  it('renders loading indicator when loading', async () => {
     mockedUseAuth.mockReturnValue({
       isAuthenticated: false,
       loading: true,
     })
 
-    render(
+    await render(
       <PrivateRoute>
         <TestChild />
       </PrivateRoute>
@@ -41,13 +41,13 @@ describe('PrivateRoute', () => {
     expect(screen.queryByTestId('test-child')).not.toBeInTheDocument()
   })
 
-  it('redirects to login when not authenticated', () => {
+  it('redirects to login when not authenticated', async () => {
     mockedUseAuth.mockReturnValue({
       isAuthenticated: false,
       loading: false,
     })
 
-    render(
+    await render(
       <PrivateRoute>
         <TestChild />
       </PrivateRoute>
@@ -57,13 +57,13 @@ describe('PrivateRoute', () => {
     expect(screen.queryByText('Loading...')).not.toBeInTheDocument()
   })
 
-  it('renders children when authenticated', () => {
+  it('renders children when authenticated', async () => {
     mockedUseAuth.mockReturnValue({
       isAuthenticated: true,
       loading: false,
     })
 
-    render(
+    await render(
       <PrivateRoute>
         <TestChild />
       </PrivateRoute>

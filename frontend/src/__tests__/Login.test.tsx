@@ -6,8 +6,8 @@ import { Login } from '../pages/Login'
 import { render, screen, waitFor } from './test-utils'
 
 // Helper to render Login page (already wrapped with AuthProvider and Router via test-utils)
-const renderLogin = () => {
-  const utils = render(<Login />)
+const renderLogin = async () => {
+  const utils = await render(<Login />)
   return {
     user: userEvent.setup(),
     ...utils,
@@ -30,8 +30,8 @@ describe('Login Page', () => {
     vi.clearAllMocks()
   })
 
-  it('renders login form', () => {
-    renderLogin()
+  it('renders login form', async () => {
+    await renderLogin()
 
     expect(screen.getByRole('heading', { name: /sign in to embla/i })).toBeInTheDocument()
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument()
@@ -40,7 +40,7 @@ describe('Login Page', () => {
   })
 
   it('allows typing email and password', async () => {
-    const { user } = renderLogin()
+    const { user } = await renderLogin()
     const emailInput = screen.getByLabelText(/email address/i)
     const passwordInput = screen.getByLabelText(/password/i)
 
@@ -65,7 +65,7 @@ describe('Login Page', () => {
       data: { id: 1, email: 'test@example.com', name: 'Test User' },
     }) // users/me
 
-    const { user } = renderLogin()
+    const { user } = await renderLogin()
 
     await user.type(screen.getByLabelText(/email address/i), 'test@example.com')
     await user.type(screen.getByLabelText(/password/i), 'password123')
@@ -98,7 +98,7 @@ describe('Login Page', () => {
       },
     })
 
-    const { user } = renderLogin()
+    const { user } = await renderLogin()
 
     await user.type(screen.getByLabelText(/email address/i), 'wrong@example.com')
     await user.type(screen.getByLabelText(/password/i), 'wrongpassword')
@@ -120,7 +120,7 @@ describe('Login Page', () => {
           : new Promise(() => {}) // Never resolves (e.g. /csrf/)
     )
 
-    const { user } = renderLogin()
+    const { user } = await renderLogin()
 
     await user.type(screen.getByLabelText(/email address/i), 'test@example.com')
     await user.type(screen.getByLabelText(/password/i), 'password')
@@ -133,7 +133,7 @@ describe('Login Page', () => {
   })
 
   it('requires email and password', async () => {
-    const { user } = renderLogin()
+    const { user } = await renderLogin()
 
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 

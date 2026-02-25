@@ -29,12 +29,12 @@ describe('Dashboard Page', () => {
     vi.clearAllMocks()
   })
 
-  it('renders dashboard with user info', () => {
+  it('renders dashboard with user info', async () => {
     mockedUseAuth.mockReturnValue({
       user: mockUser,
     })
 
-    render(<Dashboard />)
+    await render(<Dashboard />)
 
     expect(screen.getByRole('heading', { name: /dashboard/i })).toBeInTheDocument()
     expect(screen.getByText(mockUser.email)).toBeInTheDocument()
@@ -42,22 +42,22 @@ describe('Dashboard Page', () => {
     expect(screen.getByText(mockUser.id.toString())).toBeInTheDocument()
   })
 
-  it('shows "Not set" for missing name', () => {
+  it('shows "Not set" for missing name', async () => {
     mockedUseAuth.mockReturnValue({
       user: { ...mockUser, name: null },
     })
 
-    render(<Dashboard />)
+    await render(<Dashboard />)
 
     expect(screen.getByText('Not set')).toBeInTheDocument()
   })
 
-  it('renders recent activity and quick actions sections', () => {
+  it('renders recent activity and quick actions sections', async () => {
     mockedUseAuth.mockReturnValue({
       user: mockUser,
     })
 
-    render(<Dashboard />)
+    await render(<Dashboard />)
 
     expect(screen.getByRole('heading', { name: /recent activity/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /quick actions/i })).toBeInTheDocument()
