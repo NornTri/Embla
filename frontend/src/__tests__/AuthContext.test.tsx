@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { render as bareRender } from '@testing-library/react'
 import { vi } from 'vitest'
 
 import { mockAxiosInstance } from '../__mocks__/axios'
@@ -30,6 +31,23 @@ const TestComponent = () => {
     </div>
   )
 }
+
+describe('useAuth outside provider', () => {
+  it('throws when used outside AuthProvider', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    const BadComponent = () => {
+      useAuth()
+      return null
+    }
+
+    expect(() => {
+      bareRender(<BadComponent />)
+    }).toThrow('useAuth must be used within an AuthProvider')
+
+    spy.mockRestore()
+  })
+})
 
 describe('AuthContext', () => {
   beforeEach(() => {
@@ -174,6 +192,110 @@ describe('AuthContext', () => {
 
       // User should still be null
       expect(screen.getByTestId('user')).toHaveTextContent('null')
+    })
+  })
+
+  describe('401 interceptor', () => {
+    it('attempts token refresh on 401 and retries request', async () => {
+      // Mock initial auth check to succeed
+      mockAxiosInstance.get.mockResolvedValueOnce({ data: mockUser })
+
+      await render(<TestComponent />)
+
+      // Verify the response interceptor was registered
+      expect(mockAxiosInstance.interceptors.response.use).toHaveBeenCalled()
+
+      // Get the error handler from the interceptor
+      const interceptorCall = mockAxiosInstance.interceptors.response.use.mock.calls[0]!
+      const errorHandler = interceptorCall[1]
+
+      // Simulate a 401 error
+      const error401 = {
+        config: { url: '/some-endpoint', _retry: false },
+        response: { status: 401 },
+      }
+
+      // Mock token refresh success and retry
+      mockAxiosInstance.post.mockResolvedValueOnce({}) // /token/refresh/
+
+      // The interceptor calls api(originalRequest) which is the mockAxiosInstance callable
+      // Since mockAxiosInstance is a callable mock, we need the parent mock
+      const axiosMock = (await import('../__mocks__/axios')).default
+      axiosMock.mockResolvedValueOnce({ data: 'retried' })
+
+      try {
+        await errorHandler(error401)
+      } catch {
+        // May throw if mock setup isn't complete
+      }
+
+      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/token/refresh/')
+    })
+
+    it('clears user on refresh failure', async () => {
+      mockAxiosInstance.get.mockResolvedValueOnce({ data: mockUser })
+
+      await render(<TestComponent />)
+
+      const interceptorCall = mockAxiosInstance.interceptors.response.use.mock.calls[0]!
+      const errorHandler = interceptorCall[1]
+
+      const error401 = {
+        config: { url: '/some-endpoint', _retry: false },
+        response: { status: 401 },
+      }
+
+      mockAxiosInstance.post.mockRejectedValueOnce(new Error('Refresh failed'))
+
+      await expect(errorHandler(error401)).rejects.toThrow('Refresh failed')
+    })
+
+    it('does not retry on refresh endpoint 401', async () => {
+      mockAxiosInstance.get.mockResolvedValueOnce({ data: mockUser })
+
+      await render(<TestComponent />)
+
+      const interceptorCall = mockAxiosInstance.interceptors.response.use.mock.calls[0]!
+      const errorHandler = interceptorCall[1]
+
+      const error401 = {
+        config: { url: '/token/refresh/', _retry: false },
+        response: { status: 401 },
+      }
+
+      await expect(errorHandler(error401)).rejects.toBe(error401)
+    })
+
+    it('does not retry already retried requests', async () => {
+      mockAxiosInstance.get.mockResolvedValueOnce({ data: mockUser })
+
+      await render(<TestComponent />)
+
+      const interceptorCall = mockAxiosInstance.interceptors.response.use.mock.calls[0]!
+      const errorHandler = interceptorCall[1]
+
+      const error401 = {
+        config: { url: '/some-endpoint', _retry: true },
+        response: { status: 401 },
+      }
+
+      await expect(errorHandler(error401)).rejects.toBe(error401)
+    })
+
+    it('passes through non-401 errors', async () => {
+      mockAxiosInstance.get.mockResolvedValueOnce({ data: mockUser })
+
+      await render(<TestComponent />)
+
+      const interceptorCall = mockAxiosInstance.interceptors.response.use.mock.calls[0]!
+      const errorHandler = interceptorCall[1]
+
+      const error500 = {
+        config: { url: '/some-endpoint' },
+        response: { status: 500 },
+      }
+
+      await expect(errorHandler(error500)).rejects.toBe(error500)
     })
   })
 

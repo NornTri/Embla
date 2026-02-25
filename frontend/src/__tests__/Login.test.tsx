@@ -132,6 +132,21 @@ describe('Login Page', () => {
     expect(submitButton).toHaveTextContent(/signing in.../i)
   })
 
+  it('shows generic error for non-axios errors', async () => {
+    mockAxiosInstance.get.mockResolvedValueOnce({}) // CSRF
+    mockAxiosInstance.post.mockRejectedValueOnce(new Error('Network error'))
+
+    const { user } = await renderLogin()
+
+    await user.type(screen.getByLabelText(/email address/i), 'test@example.com')
+    await user.type(screen.getByLabelText(/password/i), 'password123')
+    await user.click(screen.getByRole('button', { name: /sign in/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText(/login failed. please check your credentials/i)).toBeInTheDocument()
+    })
+  })
+
   it('requires email and password', async () => {
     const { user } = await renderLogin()
 

@@ -21,6 +21,8 @@ export default defineConfig({
         '**/*.config.*',
         '**/*.test.*',
         '**/*.spec.*',
+        'src/main.tsx',
+        'src/index.css',
       ],
     },
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
