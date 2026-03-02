@@ -88,7 +88,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
-    "control_room",
+    "dj_control_room",
 ]
 
 LOCAL_APPS = [

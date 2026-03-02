@@ -24,6 +24,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 COPY pyproject.toml uv.lock ${APP_HOME}/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
+# Ensure critical packages are installed (fallback)
+RUN uv pip install django-unfold dj-control-room
 
 # devcontainer dependencies and utils
 RUN apt-get update && apt-get install --no-install-recommends -y \

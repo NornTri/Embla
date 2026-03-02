@@ -2,6 +2,7 @@ volumes:
   embla_local_postgres_data: {}
   embla_local_postgres_data_backups: {}
   embla_local_redis_data: {}
+  embla_local_venv: {}
 
 services:
   django: &django
@@ -15,8 +16,8 @@ services:
       - redis
       - mailpit
     volumes:
-      - /app/.venv
       - .:/app:z
+      - embla_local_venv:/app/.venv
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres

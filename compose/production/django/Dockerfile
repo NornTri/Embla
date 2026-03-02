@@ -24,6 +24,8 @@ COPY . ${APP_HOME}
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev
+# Ensure critical packages are installed (fallback)
+RUN uv pip install django-unfold dj-control-room
 
 # Python 'run' stage
 FROM python:3.13-slim-bookworm AS python-run-stage
