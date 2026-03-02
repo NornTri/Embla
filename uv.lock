@@ -380,6 +380,18 @@ wheels = [
 ]
 
 [[package]]
+name = "dj-control-room"
+version = "1.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a4/6c/b39e3ede734f103e0b4de250d17d2b7b1afbe33e90873dee9b13f891180a/dj_control_room-1.0.1.tar.gz", hash = "sha256:e8230c3fc3c2674735a88ca67a917e32f2e1e46d0bc57e8f58eb54568d354832", size = 1440981, upload-time = "2026-02-21T23:13:24.808Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/81/12/176b2b2f04966503d57e4d5d875daf6569969a8674823d925149216e5b1c/dj_control_room-1.0.1-py3-none-any.whl", hash = "sha256:fd278c1a7b35c5029c193fb18b20543a6f7712bd4dfca0ad3e39e4c44acb3957", size = 1435331, upload-time = "2026-02-21T23:13:22.782Z" },
+]
+
+[[package]]
 name = "django"
 version = "5.2.11"
 source = { registry = "https://pypi.org/simple" }
@@ -575,6 +587,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-unfold"
+version = "0.81.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/42/96/54e3852a562fb5da3a626ae7992f2427945cadf7d45325b8dff42c418a3d/django_unfold-0.81.0.tar.gz", hash = "sha256:4746a2e78210d174c556b8dcf6cbc87642b86282a37406d820d6c1b4f6c160be", size = 1111379, upload-time = "2026-02-25T09:48:42.197Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/63/03/f3b11452636bcb8f8fb4b2daa3301781eca7ea1b2ee5781fdc888e315b43/django_unfold-0.81.0-py3-none-any.whl", hash = "sha256:7a800fcf7ac438ae473ffa51cdfbb22ef0e6e8455dad84ce1e1846ddd21deac9", size = 1226399, upload-time = "2026-02-25T09:48:40.646Z" },
+]
+
+[[package]]
 name = "djangorestframework"
 version = "3.16.1"
 source = { registry = "https://pypi.org/simple" }
@@ -680,6 +704,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "argon2-cffi" },
     { name = "celery" },
+    { name = "dj-control-room" },
     { name = "django" },
     { name = "django-allauth", extra = ["mfa"] },
     { name = "django-anymail" },
@@ -688,6 +713,7 @@ dependencies = [
     { name = "django-environ" },
     { name = "django-model-utils" },
     { name = "django-redis" },
+    { name = "django-unfold" },
     { name = "djangorestframework" },
     { name = "djangorestframework-simplejwt" },
     { name = "drf-spectacular" },
@@ -732,6 +758,7 @@ dev = [
 requires-dist = [
     { name = "argon2-cffi", specifier = "==25.1.0" },
     { name = "celery", specifier = "==5.6.2" },
+    { name = "dj-control-room", specifier = "==1.0.1" },
     { name = "django", specifier = "==5.2.11" },
     { name = "django-allauth", extras = ["mfa"], specifier = "==65.14.3" },
     { name = "django-anymail", extras = ["postmark"], specifier = "==14.0" },
@@ -740,6 +767,7 @@ requires-dist = [
     { name = "django-environ", specifier = "==0.13.0" },
     { name = "django-model-utils", specifier = "==5.0.0" },
     { name = "django-redis", specifier = "==6.0.0" },
+    { name = "django-unfold", specifier = "==0.81.0" },
     { name = "djangorestframework", specifier = "==3.16.1" },
     { name = "djangorestframework-simplejwt", specifier = "==5.4.0" },
     { name = "drf-spectacular", specifier = "==0.29.0" },
