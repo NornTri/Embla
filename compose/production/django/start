@@ -7,4 +7,8 @@ set -o nounset
 
 python /app/manage.py collectstatic --noinput
 
-exec gunicorn config.asgi --bind 0.0.0.0:5000 --chdir=/app -k uvicorn_worker.UvicornWorker
+# --forwarded-allow-ips="*": uvicorn's ProxyHeadersMiddleware rewrites
+# scope["client"] from X-Forwarded-For, so Django's REMOTE_ADDR is the real
+# client IP instead of the Traefik container IP. Trusting every peer is safe
+# only because this service publishes no host ports — only Traefik can reach it.
+exec gunicorn config.asgi --bind 0.0.0.0:5000 --chdir=/app -k uvicorn_worker.UvicornWorker --forwarded-allow-ips="*"

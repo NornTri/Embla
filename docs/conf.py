@@ -23,7 +23,9 @@ if os.getenv("READTHEDOCS", default="False") == "True":
 else:
     sys.path.insert(0, os.path.abspath("/app"))
 os.environ["DATABASE_URL"] = "sqlite:///readthedocs.db"
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
+# Test settings only depend on main dependencies (local settings pull in
+# dev-only packages like debug-toolbar, unavailable on Read the Docs)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.test")
 django.setup()
 
 # -- Project information -----------------------------------------------------

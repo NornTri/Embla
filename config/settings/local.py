@@ -13,7 +13,8 @@ SECRET_KEY = env(
     default="Xeayrbo7H46n3sEZ8i6Ltm9bjGFWXHlUT02BL71emCI47Om7HQCvqqA5G7VUllb3",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
+# "django" is the compose service name, for container-to-container requests
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "django"]  # noqa: S104
 
 # CACHES
 # ------------------------------------------------------------------------------

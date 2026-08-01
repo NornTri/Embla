@@ -41,6 +41,7 @@ services:
     image: embla_production_traefik
     depends_on:
       - django
+      - nginx
     volumes:
       - production_traefik:/etc/traefik/acme
     ports:
@@ -74,7 +75,7 @@ services:
       context: .
       dockerfile: ./compose/production/nginx/Dockerfile
     image: embla_production_nginx
-    depends_on:
-      - django
+    # Deliberately no env_file: nginx is a pure static server and must never
+    # receive DJANGO_ADMIN_URL or other DJANGO_* secrets.
     volumes:
       - production_django_media:/usr/share/nginx/media:ro

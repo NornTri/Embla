@@ -233,10 +233,9 @@ describe('ErrorBoundary', () => {
       'href',
       'mailto:support@example.com'
     )
-    expect(screen.getByText('view troubleshooting guide')).toHaveAttribute(
-      'href',
-      '/docs/troubleshooting'
-    )
+    // The old /docs/troubleshooting link was removed: nothing serves /docs, so
+    // it resolved to the SPA fallback (login page).
+    expect(screen.queryByText('view troubleshooting guide')).toBeNull()
   })
 })
 

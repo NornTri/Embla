@@ -19,11 +19,13 @@ export default defineConfig(({ mode }) => {
       host: true,
       cors: true,
       proxy: {
+        // Forward /api requests to Django, keeping the /api prefix —
+        // Django serves its API under /api/ (see config/urls.py).
+        // The Host header is preserved (no changeOrigin) so Django's
+        // ALLOWED_HOSTS check and absolute URL building see localhost:3000.
         '/api': {
-          target: env.VITE_API_URL || 'http://django:8000',
-          changeOrigin: true,
+          target: env.VITE_API_PROXY_TARGET || 'http://django:8000',
           secure: false,
-          rewrite: (path) => path.replace(/^\/api/, ''),
           configure: (proxy) => {
             proxy.on('error', (err) => {
               console.log('Proxy error:', err)

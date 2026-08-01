@@ -165,8 +165,9 @@ Embla/
 ### Frontend (.env.development)
 
 ```
-VITE_API_URL=http://localhost:8000
 VITE_APP_ENV=development
+# Vite dev proxy target for /api requests
+VITE_API_PROXY_TARGET=http://localhost:8000
 ```
 
 ### Backend (.envs/.local/.django)
