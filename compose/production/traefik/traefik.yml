@@ -29,16 +29,48 @@ certificatesResolvers:
         entryPoint: web
 
 http:
+  # Django-reserved top-level prefixes: /api /admin /users /accounts /static
+  # (/media is served by nginx from the shared volume). Any new top-level prefix
+  # added to config/urls.py MUST be added to web-secure-django-router's rule in
+  # the same change, or it will fall through to the SPA catch-all.
   routers:
-    web-secure-router:
-      rule: "Host(`norntri.com`) || Host(`www.norntri.com`)"
+    web-secure-django-router:
+      # Trailing-slash PathPrefix forms are load-bearing: v3 PathPrefix is a raw
+      # string prefix, NOT segment-bounded — PathPrefix(`/admin`) would also
+      # match /administration. The bare Path() companions preserve Django's
+      # APPEND_SLASH redirects for slash-less requests.
+      # PathPrefix(`/admin/`) covers both the secret admin (constrained under
+      # admin/ by the guard in config/settings/production.py) and the hardcoded
+      # /admin/control-room/ — neither Traefik nor nginx ever learns the secret.
+      rule: "(Host(`norntri.com`) || Host(`www.norntri.com`)) && (PathPrefix(`/api/`) || Path(`/api`) || PathPrefix(`/admin/`) || Path(`/admin`) || PathPrefix(`/users/`) || Path(`/users`) || PathPrefix(`/accounts/`) || Path(`/accounts`) || PathPrefix(`/static/`))"
       entryPoints:
         - web-secure
+      # Every router on the web-secure entrypoint MUST declare an explicit
+      # priority: Traefik's default priority is the rule string length, which
+      # would silently outrank any small explicit value.
+      priority: 1000
       middlewares:
+        - redirect-www
         - csrf
       service: django
       tls:
         # https://doc.traefik.io/traefik/routing/routers/#certresolver
+        certResolver: letsencrypt
+
+    web-secure-spa-router:
+      # Catch-all for the React SPA shell, /assets/ bundles and /media/ —
+      # everything not matched by the higher-priority django router above.
+      # Keeps the www Host so the LE certificate retains its www SAN.
+      rule: "Host(`norntri.com`) || Host(`www.norntri.com`)"
+      entryPoints:
+        - web-secure
+      # See priority note on web-secure-django-router.
+      priority: 100
+      middlewares:
+        - redirect-www
+        - hsts
+      service: nginx
+      tls:
         certResolver: letsencrypt
 
     flower-secure-router:
@@ -50,22 +82,41 @@ http:
         # https://doc.traefik.io/traefik/master/routing/routers/#certresolver
         certResolver: letsencrypt
 
-    web-media-router:
-      rule: "(Host(`norntri.com`) || Host(`www.norntri.com`)) && PathPrefix(`/media/`)"
-      entryPoints:
-        - web-secure
-      middlewares:
-        - csrf
-      service: django-media
-      tls:
-        certResolver: letsencrypt
-
+  # SECURITY: never add forwardedHeaders (insecure/trustedIPs) to any
+  # entrypoint. The untrusted default makes Traefik strip client-supplied
+  # X-Forwarded-* and author them itself (X-Forwarded-Proto=https after TLS
+  # termination) — Django's SECURE_PROXY_SSL_HEADER does no IP validation, so
+  # this sanitizer is the only thing preventing header spoofing.
   middlewares:
     csrf:
       # https://doc.traefik.io/traefik/master/middlewares/http/headers/#hostsproxyheaders
       # https://docs.djangoproject.com/en/dev/ref/csrf/#ajax
+      # In Traefik v3, hostsProxyHeaders only feeds allowedHosts (unset here),
+      # so this middleware is an inert cookiecutter-django inheritance; the
+      # X-CSRFToken header reaches Django via normal pass-through regardless.
+      # DO NOT add allowedHosts to this middleware — it would resolve the
+      # request host from the X-CSRFToken value and reject CSRF-bearing
+      # requests.
       headers:
         hostsProxyHeaders: ["X-CSRFToken"]
+
+    hsts:
+      # SPA router ONLY — Django emits its own full HSTS header for the paths
+      # it serves. Keep all three values in lockstep with SECURE_HSTS_SECONDS /
+      # _INCLUDE_SUBDOMAINS / _PRELOAD in config/settings/production.py, or the
+      # browser sees a nondeterministic policy for the host.
+      headers:
+        stsSeconds: 60
+        stsIncludeSubdomains: true
+        stsPreload: true
+
+    redirect-www:
+      # ALLOWED_HOSTS only contains the apex; www requests reaching Django
+      # would 400 and www-origin API calls would fail CSRF.
+      redirectRegex:
+        regex: "^https://www\\.norntri\\.com/(.*)"
+        replacement: "https://norntri.com/${1}"
+        permanent: true
 
   services:
     django:
@@ -78,7 +129,7 @@ http:
         servers:
           - url: http://flower:5555
 
-    django-media:
+    nginx:
       loadBalancer:
         servers:
           - url: http://nginx:80

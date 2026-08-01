@@ -753,6 +753,10 @@ dev = [
     { name = "watchfiles" },
     { name = "werkzeug", extra = ["watchdog"] },
 ]
+docs = [
+    { name = "sphinx" },
+    { name = "sphinx-autobuild" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -806,6 +810,10 @@ dev = [
     { name = "sphinx-autobuild", specifier = "==2025.8.25" },
     { name = "watchfiles", specifier = "==1.1.1" },
     { name = "werkzeug", extras = ["watchdog"], specifier = "==3.1.6" },
+]
+docs = [
+    { name = "sphinx", specifier = "==9.1.0" },
+    { name = "sphinx-autobuild", specifier = "==2025.8.25" },
 ]
 
 [[package]]

@@ -190,13 +190,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                   className="font-medium text-blue-600 hover:text-blue-800"
                 >
                   Contact support
-                </a>{' '}
-                or{' '}
-                <a
-                  href="/docs/troubleshooting"
-                  className="font-medium text-blue-600 hover:text-blue-800"
-                >
-                  view troubleshooting guide
                 </a>
               </p>
             </div>

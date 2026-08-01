@@ -278,12 +278,17 @@ just frontend-restart
 
 #### Environment Variables:
 
-Check `.env.development` for correct API URL:
+Check `.env.development` for the correct proxy target:
 
 ```bash
-VITE_API_URL=http://localhost:8000
 VITE_APP_ENV=development
+# Vite dev proxy target for /api requests (docker-compose overrides
+# this with http://django:8000)
+VITE_API_PROXY_TARGET=http://localhost:8000
 ```
+
+API requests use the `/api` base path and are forwarded to Django by the
+Vite dev server proxy, so the browser only ever talks to `localhost:3000`.
 
 ### Backend Debugging
 
@@ -366,9 +371,24 @@ GitHub Actions runs on PR and push to main:
 cd frontend
 bun run build
 
-# The dist/ directory contains production assets
-# These are served by Django in production
+# The dist/ directory contains production assets.
+# In production these are baked into the nginx image
+# (compose/production/nginx/Dockerfile) and served by nginx.
 ```
+
+### Production Routing
+
+Traefik terminates TLS on :443 and routes by path
+(`compose/production/traefik/traefik.yml`):
+
+- `/api`, `/admin`, `/users`, `/accounts`, `/static` → Django (gunicorn on
+  `django:5000`; `/static` is served by WhiteNoise)
+- everything else (SPA shell, `/assets/` bundles, `/media/`) → nginx, a pure
+  static file server (`compose/production/nginx/default.conf`)
+
+Any new top-level URL prefix added to `config/urls.py` must also be added to
+`web-secure-django-router`'s rule in `traefik.yml`, or requests to it will fall
+through to the SPA.
 
 ### Docker Production
 
@@ -380,11 +400,18 @@ docker compose -f docker-compose.production.yml build
 docker compose -f docker-compose.production.yml up -d
 ```
 
+When changing `traefik.yml`, restart the traefik container rather than editing
+the file in place on a running host — the file provider watches it and would
+hot-reload a half-edited config.
+
 ### Environment Configuration
 
 Production requires:
 
 - `DJANGO_SECRET_KEY` (secure random string)
+- `DJANGO_ADMIN_URL` in the form `admin/<urlsafe-token>/` (≥22-char token, no
+  leading slash, trailing slash required) — Django refuses to boot without it,
+  and the edge router only forwards `/admin/*` to Django
 - `DJANGO_DEBUG=False`
 - Database connection string
 - Redis connection string
@@ -479,7 +506,7 @@ These are known issues not caused by current development work.
 ### Health Checks
 
 - Frontend: `http://localhost:3000/health`
-- Backend: `http://localhost:8000/health/`
+- Backend: `http://localhost:8000/api/health/`
 - Database: Django admin interface
 
 ### Logging

@@ -1,7 +1,9 @@
 # ruff: noqa: E501
 import logging
+import re
 
 import sentry_sdk
+from django.core.exceptions import ImproperlyConfigured
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
@@ -54,6 +56,12 @@ SESSION_COOKIE_NAME = "__Secure-sessionid"
 CSRF_COOKIE_SECURE = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-name
 CSRF_COOKIE_NAME = "__Secure-csrftoken"
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-trusted-origins
+# Defence in depth: is_secure() is already True via SECURE_PROXY_SSL_HEADER, but
+# without this a broken X-Forwarded-Proto shows up as a site-wide 403
+# REASON_BAD_ORIGIN on every POST. If that 403 ever appears, suspect the
+# forwarded-proto chain (Traefik entrypoint), not the CSRF token handling.
+CSRF_TRUSTED_ORIGINS = ["https://norntri.com"]
 # https://docs.djangoproject.com/en/dev/topics/security/#ssl-https
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-seconds
 SECURE_HSTS_SECONDS = 60
@@ -99,11 +107,20 @@ ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX
 
 # ADMIN
 # ------------------------------------------------------------------------------
-# Django Admin URL regex.
-ADMIN_URL = env(
-    "DJANGO_ADMIN_URL",
-    default=__import__("secrets").token_urlsafe(32) + "/",
-)
+# Django Admin URL. Required, and constrained under the public "admin/" prefix
+# (base.py's default is "admin/"): the production edge router only forwards
+# /admin/* to Django (see compose/production/traefik/traefik.yml), so a
+# root-level secret path would silently fall through to the SPA. The old
+# per-process random default was already unusable — each gunicorn worker
+# generated a different URL — so unset now fails loud instead.
+ADMIN_URL = env("DJANGO_ADMIN_URL")
+if not re.fullmatch(r"admin/[A-Za-z0-9_-]{22,}/", ADMIN_URL):
+    msg = (
+        "DJANGO_ADMIN_URL must look like 'admin/<urlsafe-token>/' with a token "
+        "of at least 22 characters: the edge router only forwards /admin/* to "
+        "Django (see compose/production/traefik/traefik.yml)."
+    )
+    raise ImproperlyConfigured(msg)
 
 # Anymail
 # ------------------------------------------------------------------------------

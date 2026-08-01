@@ -30,6 +30,12 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <Router>
+          {/* Top-level prefixes /api /admin /users /accounts /static /media are
+              reserved for the backend and routed away at the Traefik edge
+              (compose/production/traefik/traefik.yml is the source of truth) —
+              a SPA route under any of them will never render in production.
+              The Django-rendered auth surface (/accounts/, /users/) is
+              intentionally disjoint from the SPA's /login. */}
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route

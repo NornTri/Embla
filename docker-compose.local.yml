@@ -92,5 +92,8 @@ services:
       - /app/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true
+      # Overrides frontend/.env.development so the Vite dev proxy targets the
+      # django container instead of localhost (process env wins over .env files)
+      - VITE_API_PROXY_TARGET=http://django:8000
     depends_on:
       - django

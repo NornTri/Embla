@@ -18,19 +18,24 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-// Configure axios to include CSRF token and credentials
+// Configure axios to include CSRF token and credentials.
+// The cookie name must match Django's CSRF_COOKIE_NAME
+// ('__Secure-csrftoken' in production, 'csrftoken' otherwise).
+const CSRF_COOKIE_NAME = import.meta.env.VITE_CSRF_COOKIE_NAME ?? 'csrftoken'
 axios.defaults.withCredentials = true
-axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfCookieName = CSRF_COOKIE_NAME
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
-// Base URL for API - will be proxied in dev, set via environment variable in production
+// Base URL for API — '/api' is forwarded to Django by the Vite dev proxy in
+// development and routed by Traefik straight to Django in production. Set
+// VITE_API_URL only to bypass the proxy and call a remote API directly.
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? '/api'
 
 // Create axios instance with interceptors
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  xsrfCookieName: 'csrftoken',
+  xsrfCookieName: CSRF_COOKIE_NAME,
   xsrfHeaderName: 'X-CSRFToken',
 })
 

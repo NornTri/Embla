@@ -9,17 +9,23 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+from config.views import health
 from embla.users.api.jwt_views import CookieTokenObtainPairView
 from embla.users.api.jwt_views import CookieTokenRefreshView
 from embla.users.api.jwt_views import CookieTokenVerifyView
 from embla.users.api.views import csrf
 from embla.users.api.views import logout
 
+# Production edge-routing contract: every top-level prefix mounted here must
+# appear in web-secure-django-router's rule in
+# compose/production/traefik/traefik.yml, or requests fall through to the SPA.
 urlpatterns = [
+    # Control Room (admin dashboard for Redis, Celery, etc.). Mounted before
+    # ADMIN_URL: the admin URLconf ends in a catch-all, so a degenerate
+    # ADMIN_URL (e.g. "admin/") would otherwise shadow this.
+    path("admin/control-room/", include("dj_control_room.urls")),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
-    # Control Room (admin dashboard for Redis, Celery, etc.)
-    path("admin/control-room/", include("dj_control_room.urls")),
     # User management
     path("users/", include("embla.users.urls")),
     path("accounts/", include("allauth.urls")),
@@ -43,6 +49,8 @@ urlpatterns += [
     # CSRF and logout
     path("api/csrf/", csrf, name="csrf"),
     path("api/logout/", logout, name="logout"),
+    # Health check used by the frontend health monitor
+    path("api/health/", health, name="health"),
     # API schema and docs
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(
